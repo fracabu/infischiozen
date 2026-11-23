@@ -9,6 +9,7 @@ export const useClientiStore = defineStore('clienti', () => {
   async function carica() {
     lista.value = await api.get('/clienti')
     caricato.value = true
+
     return lista.value
   }
 
@@ -20,7 +21,9 @@ export const useClientiStore = defineStore('clienti', () => {
     const salvato = cliente.id
       ? await api.put(`/clienti/${cliente.id}`, cliente)
       : await api.post('/clienti', cliente)
+
     await carica()
+
     return salvato
   }
 

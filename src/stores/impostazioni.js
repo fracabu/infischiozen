@@ -7,14 +7,19 @@ export const useImpostazioniStore = defineStore('impostazioni', () => {
   const caricato = ref(false)
 
   async function carica() {
-    if (caricato.value) return dati.value
+    if (caricato.value) {
+      return dati.value
+    }
+
     dati.value = await api.get('/impostazioni')
     caricato.value = true
+
     return dati.value
   }
 
   async function salva(nuoviDati) {
     dati.value = await api.put('/impostazioni', nuoviDati)
+
     return dati.value
   }
 
@@ -31,6 +36,7 @@ export const useImpostazioniStore = defineStore('impostazioni', () => {
   async function prossimoNumero() {
     const aggiornati = await api.get('/impostazioni')
     dati.value = aggiornati
+
     return { numero: aggiornati.prossimoNumeroFattura, anno: aggiornati.annoCorrente }
   }
 

@@ -18,7 +18,10 @@
 const num = (v) => (v === null || v === undefined ? null : Number(v))
 
 export function clienteVersoApp(r) {
-  if (!r) return null
+  if (!r) {
+    return null
+  }
+
   return {
     id: r.id,
     tipo: r.tipo,
@@ -47,6 +50,7 @@ export function clienteVersoDb(c) {
   const nomeCompleto =
     c.nomeCompleto ||
     (c.ragioneSociale || `${c.nome || ''} ${c.cognome || ''}`.trim())
+
   return {
     tipo: c.tipo || 'privato',
     nome: c.nome || null,
@@ -69,7 +73,10 @@ export function clienteVersoDb(c) {
 }
 
 export function fatturaVersoApp(r) {
-  if (!r) return null
+  if (!r) {
+    return null
+  }
+
   return {
     id: r.id,
     numero: r.numero,
@@ -115,6 +122,7 @@ export function fatturaVersoDb(f) {
     prezzoUnitario: Number(r.prezzoUnitario) || 0,
     totaleRiga: Number(r.totaleRiga) || 0,
   }))
+
   return {
     data_emissione: f.data || null,
     cliente_id: f.clienteId ?? null,
@@ -135,7 +143,10 @@ export function fatturaVersoDb(f) {
 }
 
 export function prodottoVersoApp(r) {
-  if (!r) return null
+  if (!r) {
+    return null
+  }
+
   return {
     id: r.id,
     nome: r.nome,

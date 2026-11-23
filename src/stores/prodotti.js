@@ -11,18 +11,27 @@ export const useProdottiStore = defineStore('prodotti', () => {
   async function carica() {
     lista.value = await api.get('/prodotti')
     caricato.value = true
+
     return lista.value
   }
 
   async function get(id) {
     const n = Number(id)
-    if (!caricato.value) await carica()
+
+    if (!caricato.value) {
+      await carica()
+    }
+
     return lista.value.find((p) => p.id === n) || null
   }
 
   async function salva(prodotto) {
-    if (prodotto.id) await api.put(`/prodotti/${prodotto.id}`, prodotto)
-    else await api.post('/prodotti', prodotto)
+    if (prodotto.id) {
+      await api.put(`/prodotti/${prodotto.id}`, prodotto)
+    } else {
+      await api.post('/prodotti', prodotto)
+    }
+
     await carica()
   }
 

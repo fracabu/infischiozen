@@ -16,6 +16,7 @@ const file = process.argv[2] || 'schema.sql'
 const sql = await connetti()
 console.log(`Database: ${sql.modalita === 'neon' ? 'Neon' : `locale (${sql.cartella})`}`)
 console.log(`Applico ${file}`)
+
 try {
   const n = await applicaSchema(sql, { file, log: console.log })
   console.log(`\n${n}/${n} applicate.`)

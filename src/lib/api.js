@@ -7,6 +7,7 @@ const BASE = '/api'
 
 async function richiesta(metodo, percorso, corpo) {
   let risposta
+
   try {
     risposta = await fetch(BASE + percorso, {
       method: metodo,
@@ -20,15 +21,25 @@ async function richiesta(metodo, percorso, corpo) {
       "Server dati non raggiungibile. Avvia il gestionale con `npm run dev` " +
       '(che lancia sia le API sia l\'interfaccia).')
   }
+
   if (!risposta.ok) {
     let messaggio = `Errore ${risposta.status}`
+
     try {
       const j = await risposta.json()
-      if (j?.errore) messaggio = j.errore
+
+      if (j?.errore) {
+        messaggio = j.errore
+      }
     } catch { /* risposta senza corpo JSON: resta il codice di stato */ }
+
     throw new Error(messaggio)
   }
-  if (risposta.status === 204) return null
+
+  if (risposta.status === 204) {
+    return null
+  }
+
   return risposta.json()
 }
 
@@ -42,7 +53,11 @@ export const api = {
   // Il PDF allegato viaggia come binario, non dentro il JSON.
   async getPdf(id) {
     const r = await fetch(`${BASE}/fatture/${id}/pdf`)
-    if (!r.ok) return null
+
+    if (!r.ok) {
+      return null
+    }
+
     return r.blob()
   },
   async putPdf(id, blob) {
@@ -51,7 +66,11 @@ export const api = {
       headers: { 'Content-Type': 'application/pdf' },
       body: blob,
     })
-    if (!r.ok) throw new Error('Caricamento del PDF non riuscito')
+
+    if (!r.ok) {
+      throw new Error('Caricamento del PDF non riuscito')
+    }
+
     return r.json()
   },
 }

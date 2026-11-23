@@ -35,7 +35,7 @@ export const IMPOSTAZIONI_DEFAULT = {
   applicaMarcaDaBollo: true,
   addebitaBolloAlCliente: true,
   sogliaBollo: 77.47,
-  importoBollo: 2.0,
+  importoBollo: 2,
   testoBollo: 'Imposta di bollo assolta in modo virtuale ai sensi del DM 17/06/2014',
   logoBase64: '',
   // Massimo 100 caratteri: e' il limite di RiferimentoNormativo in FatturaPA.

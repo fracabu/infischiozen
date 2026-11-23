@@ -21,15 +21,23 @@ const FILE_ENV = join(ROOT, '.env.local')
 
 function caricaEnv() {
   let raw
+
   try {
     raw = readFileSync(FILE_ENV, 'utf8')
   } catch {
     return
   }
+
   for (const line of raw.split('\n')) {
-    if (line.trim().startsWith('#')) continue
+    if (line.trim().startsWith('#')) {
+      continue
+    }
+
     const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.+?)\s*$/)
-    if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '')
+
+    if (m && !process.env[m[1]]) {
+      process.env[m[1]] = m[2].replaceAll(/^["']|["']$/g, '')
+    }
   }
 }
 
@@ -39,7 +47,11 @@ const SEGNAPOSTO = 'postgresql://utente:password@host/database'
 
 function urlNeon() {
   const url = process.env.DATABASE_URL || process.env.POSTGRES_URL
-  if (!url || url.startsWith(SEGNAPOSTO)) return null
+
+  if (!url || url.startsWith(SEGNAPOSTO)) {
+    return null
+  }
+
   return url
 }
 
@@ -47,21 +59,26 @@ function urlNeon() {
 // sempre come parametri, mai incollati nel testo.
 function adattaPglite(db) {
   const query = async (testo, parametri = []) => (await db.query(testo, parametri)).rows
+
   const sql = (stringhe, ...valori) =>
     query(stringhe.reduce((acc, s, i) => `${acc}$${i}${s}`), valori)
+
   sql.query = query
   sql.chiudi = () => db.close()
+
   return sql
 }
 
 export async function connetti() {
   caricaEnv()
   const url = urlNeon()
+
   if (url) {
     const { neon } = await import('@neondatabase/serverless')
     const sql = neon(url)
     sql.chiudi = async () => {}
     sql.modalita = 'neon'
+
     return sql
   }
 
@@ -72,12 +89,14 @@ export async function connetti() {
   const sql = adattaPglite(db)
   sql.modalita = 'locale'
   sql.cartella = cartella
+
   return sql
 }
 
 // Applica db/schema.sql. Idempotente: tutto è CREATE ... IF NOT EXISTS.
 export async function applicaSchema(sql, { file = 'schema.sql', log = () => {} } = {}) {
   const ddl = readFileSync(join(ROOT, 'db', file), 'utf8')
+
   // Il driver HTTP di Neon esegue una istruzione per volta: si divide sui ';'
   // di fine riga, tenendo fuori i commenti (che possono contenere ';').
   const istruzioni = ddl
@@ -87,14 +106,16 @@ export async function applicaSchema(sql, { file = 'schema.sql', log = () => {} }
     .split(/;\s*$/m)
     .map((s) => s.trim())
     .filter(Boolean)
+
   for (const st of istruzioni) {
     try {
       await sql.query(st)
-      log(`  [ok]   ${st.replace(/\s+/g, ' ').slice(0, 72)}`)
+      log(`  [ok]   ${st.replaceAll(/\s+/g, ' ').slice(0, 72)}`)
     } catch (e) {
-      e.message = `${st.replace(/\s+/g, ' ').slice(0, 72)}\n         ${e.message}`
+      e.message = `${st.replaceAll(/\s+/g, ' ').slice(0, 72)}\n         ${e.message}`
       throw e
     }
   }
+
   return istruzioni.length
 }

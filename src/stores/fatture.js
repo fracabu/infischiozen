@@ -9,13 +9,18 @@ export const useFattureStore = defineStore('fatture', () => {
   async function carica() {
     lista.value = await api.get('/fatture')
     caricato.value = true
+
     return lista.value
   }
 
   async function get(id) {
     const f = await api.get(`/fatture/${Number(id)}`)
+
     // Il binario del PDF non sta nel JSON: si scarica solo se c'e' davvero.
-    if (f?.pdfEsternoPresente) f.pdfEsternoBlob = await api.getPdf(f.id)
+    if (f?.pdfEsternoPresente) {
+      f.pdfEsternoBlob = await api.getPdf(f.id)
+    }
+
     return f
   }
 
@@ -24,10 +29,13 @@ export const useFattureStore = defineStore('fatture', () => {
   // un buco nella numerazione progressiva.
   async function salvaBozza(fattura) {
     const corpo = { ...fattura, origine: 'interna', stato: 'bozza' }
+
     const salvata = fattura.id
       ? await api.put(`/fatture/${fattura.id}`, corpo)
       : await api.post('/fatture', corpo)
+
     await carica()
+
     return salvata.id
   }
 
@@ -35,11 +43,17 @@ export const useFattureStore = defineStore('fatture', () => {
   async function salvaEsterna(fattura) {
     const { pdfEsternoBlob, ...resto } = fattura
     const corpo = { ...resto, origine: 'esterna', stato: fattura.stato || 'pagata' }
+
     const salvata = fattura.id
       ? await api.put(`/fatture/${fattura.id}`, corpo)
       : await api.post('/fatture', corpo)
-    if (pdfEsternoBlob) await api.putPdf(salvata.id, pdfEsternoBlob)
+
+    if (pdfEsternoBlob) {
+      await api.putPdf(salvata.id, pdfEsternoBlob)
+    }
+
     await carica()
+
     return salvata.id
   }
 
@@ -53,10 +67,13 @@ export const useFattureStore = defineStore('fatture', () => {
       stato: 'emessa',
       anno: fattura.anno || new Date(fattura.data || Date.now()).getFullYear(),
     }
+
     const salvata = fattura.id
       ? await api.put(`/fatture/${fattura.id}`, corpo)
       : await api.post('/fatture', corpo)
+
     await carica()
+
     return salvata.id
   }
 
@@ -67,7 +84,11 @@ export const useFattureStore = defineStore('fatture', () => {
 
   async function salvaXml(id, xmlString) {
     const f = await api.get(`/fatture/${Number(id)}`)
-    if (!f) return
+
+    if (!f) {
+      return
+    }
+
     await api.put(`/fatture/${f.id}`, { ...f, xmlString })
     await carica()
   }

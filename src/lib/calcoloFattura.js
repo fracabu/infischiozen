@@ -32,6 +32,7 @@ export function calcolaFattura(righe, impostazioni) {
     lista.reduce((acc, r) => {
       const q = Number(r.quantita) || 0
       const p = Number(r.prezzoUnitario) || 0
+
       return acc + q * p
     }, 0)
   )
@@ -41,6 +42,7 @@ export function calcolaFattura(righe, impostazioni) {
 
   let imponibile
   let rivalsaInps = 0
+
   if (perc === 0) {
     imponibile = sommaRighe
   } else if (prezziLordi) {
@@ -58,6 +60,7 @@ export function calcolaFattura(righe, impostazioni) {
   // (entra nel totale) oppure restare a carico del prestatore: in entrambi i
   // casi va dichiarato nell'XML, vedi bolloDovuto().
   let marcaDaBollo = 0
+
   if (bolloDovuto({ imponibile, rivalsaInps }, imp) && imp.addebitaBolloAlCliente !== false) {
     marcaDaBollo = round2(Number(imp.importoBollo) || 0)
   }
@@ -74,8 +77,13 @@ export function calcolaFattura(righe, impostazioni) {
  */
 export function bolloDovuto(fattura, impostazioni) {
   const imp = impostazioni || {}
-  if (!imp.applicaMarcaDaBollo) return false
+
+  if (!imp.applicaMarcaDaBollo) {
+    return false
+  }
+
   const importo = (Number(fattura.imponibile) || 0) + (Number(fattura.rivalsaInps) || 0)
+
   return importo > (Number(imp.sogliaBollo) || 0)
 }
 
@@ -83,5 +91,6 @@ export function bolloDovuto(fattura, impostazioni) {
 export function totaleRiga(riga) {
   const q = Number(riga.quantita) || 0
   const p = Number(riga.prezzoUnitario) || 0
+
   return round2(q * p)
 }

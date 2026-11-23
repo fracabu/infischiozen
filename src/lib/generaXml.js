@@ -4,11 +4,11 @@ import { bolloDovuto } from './calcoloFattura.js'
 // Escape XML di un valore testuale.
 function esc(v) {
   return String(v == null ? '' : v)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('\'', '&apos;')
 }
 
 // Importo con punto decimale e 2 cifre.
@@ -18,7 +18,8 @@ function importo(n) {
 
 // Progressivo invio: contatore base36 di 5 caratteri ricavato da anno+numero.
 function progressivo(fattura) {
-  const base = (Number(fattura.anno) || 0) * 100000 + (Number(fattura.numero) || 0)
+  const base = (Number(fattura.anno) || 0) * 100_000 + (Number(fattura.numero) || 0)
+
   return base.toString(36).toUpperCase().padStart(5, '0').slice(-5)
 }
 
@@ -31,26 +32,46 @@ export function validaCampiXml(fattura, impostazioni) {
   const imp = impostazioni || {}
   const c = fattura.clienteSnapshot || {}
 
-  if (!fattura.numero) errori.push('La fattura deve essere emessa (numero assegnato).')
-  if (!imp.partitaIVA) errori.push('Partita IVA del cedente mancante (Impostazioni).')
-  if (!imp.codiceFiscale) errori.push('Codice fiscale del cedente mancante (Impostazioni).')
+  if (!fattura.numero) {
+    errori.push('La fattura deve essere emessa (numero assegnato).')
+  }
+
+  if (!imp.partitaIVA) {
+    errori.push('Partita IVA del cedente mancante (Impostazioni).')
+  }
+
+  if (!imp.codiceFiscale) {
+    errori.push('Codice fiscale del cedente mancante (Impostazioni).')
+  }
+
   if (!imp.indirizzo || !imp.cap || !imp.citta || !imp.provincia) {
     errori.push('Indirizzo completo del cedente mancante (Impostazioni).')
   }
+
   if (!c.indirizzo || !c.cap || !c.citta) {
     errori.push('Indirizzo del cliente incompleto.')
   }
+
   if (!c.partitaIVA && !c.codiceFiscale) {
     errori.push('Il cliente deve avere Partita IVA o Codice fiscale.')
   }
+
   // '0000000' senza PEC e' valido: e' il caso normale dei privati, la fattura
   // resta a disposizione nel loro cassetto fiscale.
   const cd = (c.codiceDestinatario || '').trim()
-  if (!cd) errori.push('Codice destinatario del cliente mancante.')
+
+  if (!cd) {
+    errori.push('Codice destinatario del cliente mancante.')
+  }
+
   if ((imp.dicituraRegime || '').length > 100) {
     errori.push('La dicitura di legge supera i 100 caratteri ammessi (Impostazioni).')
   }
-  if (!fattura.righe || !fattura.righe.length) errori.push('La fattura non ha righe.')
+
+  if (!fattura.righe || fattura.righe.length === 0) {
+    errori.push('La fattura non ha righe.')
+  }
+
   return errori
 }
 
@@ -69,6 +90,7 @@ export function generaXml(fattura, impostazioni) {
 
   // Anagrafica cessionario: azienda/PA usa Denominazione, privato usa Nome+Cognome.
   let anagraficaCliente
+
   if (c.tipo === 'privato') {
     anagraficaCliente = `        <Nome>${esc(c.nome)}</Nome>
         <Cognome>${esc(c.cognome)}</Cognome>`
@@ -78,24 +100,28 @@ export function generaXml(fattura, impostazioni) {
 
   // Identificativi fiscali cliente.
   let idFiscaleCliente = ''
+
   if (c.partitaIVA) {
     idFiscaleCliente = `      <IdFiscaleIVA>
         <IdPaese>${esc(nazC)}</IdPaese>
         <IdCodice>${esc(c.partitaIVA)}</IdCodice>
       </IdFiscaleIVA>\n`
   }
+
   const cfCliente = c.codiceFiscale
     ? `      <CodiceFiscale>${esc(c.codiceFiscale)}</CodiceFiscale>\n`
     : ''
 
   // Dettaglio linee: una per riga + una per la rivalsa INPS.
   let numLinea = 0
+
   const linee = (fattura.righe || [])
     .map((r) => {
       numLinea++
       const q = Number(r.quantita) || 0
       const prezzoUnit = Number(r.prezzoUnitario) || 0
       const totale = r.totaleRiga != null ? Number(r.totaleRiga) : round2(q * prezzoUnit)
+
       return `      <DettaglioLinee>
         <NumeroLinea>${numLinea}</NumeroLinea>
         <Descrizione>${esc(r.descrizione)}</Descrizione>
@@ -109,8 +135,10 @@ export function generaXml(fattura, impostazioni) {
     .join('\n')
 
   let lineaRivalsa = ''
+
   if (fattura.rivalsaInps && Number(fattura.rivalsaInps) > 0) {
     numLinea++
+
     lineaRivalsa = `\n      <DettaglioLinee>
         <NumeroLinea>${numLinea}</NumeroLinea>
         <Descrizione>Rivalsa ${esc(fattura.percentualeRivalsa || imp.percentualeRivalsaInps || 4)}% Gestione Separata INPS</Descrizione>
@@ -127,8 +155,10 @@ export function generaXml(fattura, impostazioni) {
   const bolloAddebitato = Number(fattura.marcaDaBollo) > 0
   let lineaBollo = ''
   let riepilogoBollo = ''
+
   if (bolloAddebitato) {
     numLinea++
+
     lineaBollo = `\n      <DettaglioLinee>
         <NumeroLinea>${numLinea}</NumeroLinea>
         <Descrizione>Rimborso imposta di bollo</Descrizione>
@@ -137,6 +167,7 @@ export function generaXml(fattura, impostazioni) {
         <AliquotaIVA>0.00</AliquotaIVA>
         <Natura>N1</Natura>
       </DettaglioLinee>`
+
     riepilogoBollo = `\n      <DatiRiepilogo>
         <AliquotaIVA>0.00</AliquotaIVA>
         <Natura>N1</Natura>
@@ -164,6 +195,7 @@ export function generaXml(fattura, impostazioni) {
   const scadenza = fattura.scadenzaPagamento
     ? `\n        <DataScadenzaPagamento>${esc(fattura.scadenzaPagamento)}</DataScadenzaPagamento>`
     : ''
+
   const ibanRiga = imp.iban
     ? `\n        <IBAN>${esc(imp.iban)}</IBAN>`
     : ''
@@ -253,5 +285,6 @@ ${linee}${lineaRivalsa}${lineaBollo}
 export function nomeFileXml(fattura, impostazioni) {
   const naz = ((impostazioni && impostazioni.nazione) || 'IT').toUpperCase()
   const piva = (impostazioni && impostazioni.partitaIVA) || '00000000000'
+
   return `${naz}${piva}_${progressivo(fattura)}.xml`
 }

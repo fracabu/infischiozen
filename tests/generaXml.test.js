@@ -26,6 +26,7 @@ const AZIENDA = {
 
 function fattura(righe, cliente = PRIVATO, imp = IMP) {
   const calcolo = calcolaFattura(righe, imp)
+
   return {
     numero: 7, anno: 2026, data: '2026-03-15',
     clienteSnapshot: cliente, righe,
@@ -54,6 +55,7 @@ describe('generaXml', () => {
       [{ descrizione: 'B', quantita: 2, prezzoUnitario: 100 }],         // con bollo addebitato
       [{ descrizione: 'C', quantita: 1, prezzoUnitario: 75 }],          // bollo per effetto della rivalsa
     ]
+
     for (const righe of casi) {
       const f = fattura(righe)
       const xml = generaXml(f, IMP)
@@ -104,7 +106,7 @@ describe('generaXml', () => {
     const xml = generaXml(fattura([{ descrizione: 'A', quantita: 1, prezzoUnitario: 50 }]), IMP)
     // L'apostrofo di "d'acconto" esce come &apos;: è l'escape corretto, un
     // parser XML lo rilegge come '. Si confronta il testo decodificato.
-    const testo = valori(xml, 'RiferimentoNormativo')[0].replace(/&apos;/g, "'")
+    const testo = valori(xml, 'RiferimentoNormativo')[0].replaceAll('&apos;', "'")
     expect(testo).toBe(IMP.dicituraRegime)
   })
 })

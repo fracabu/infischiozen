@@ -8,7 +8,10 @@ const vfs =
   (pdfFonts && pdfFonts.pdfMake && pdfFonts.pdfMake.vfs) ||
   (pdfFonts && pdfFonts.vfs) ||
   (pdfFonts && pdfFonts.default && pdfFonts.default.vfs)
-if (vfs) pdfMake.vfs = vfs
+
+if (vfs) {
+  pdfMake.vfs = vfs
+}
 
 // Importo in formato "1.234,56 €"
 function euro(n) {
@@ -21,8 +24,14 @@ function euro(n) {
 }
 
 function nomeCliente(c) {
-  if (!c) return ''
-  if (c.tipo === 'privato') return `${c.cognome || ''} ${c.nome || ''}`.trim()
+  if (!c) {
+    return ''
+  }
+
+  if (c.tipo === 'privato') {
+    return `${c.cognome || ''} ${c.nome || ''}`.trim()
+  }
+
   return c.ragioneSociale || `${c.cognome || ''} ${c.nome || ''}`.trim()
 }
 
@@ -55,13 +64,20 @@ export async function generaPdf(fattura, impostazioni) {
     { text: cliente.indirizzo || '', style: 'datiRigaR' },
     { text: `${cliente.cap || ''} ${cliente.citta || ''} (${cliente.provincia || ''})`, style: 'datiRigaR' }
   ]
-  if (cliente.codiceFiscale) dest.push({ text: `C.F.: ${cliente.codiceFiscale}`, style: 'datiRigaR' })
-  if (cliente.partitaIVA) dest.push({ text: `P.IVA: ${cliente.partitaIVA}`, style: 'datiRigaR' })
+
+  if (cliente.codiceFiscale) {
+    dest.push({ text: `C.F.: ${cliente.codiceFiscale}`, style: 'datiRigaR' })
+  }
+
+  if (cliente.partitaIVA) {
+    dest.push({ text: `P.IVA: ${cliente.partitaIVA}`, style: 'datiRigaR' })
+  }
 
   // Tabella righe: Descrizione / Importo.
   const corpoRighe = (fattura.righe || []).map((r) => {
     const q = Number(r.quantita) || 0
     const descr = q > 1 ? `${r.descrizione} (q.tà ${q})` : r.descrizione
+
     return [
       { text: descr, style: 'cellaDescr' },
       { text: euro(r.totaleRiga != null ? r.totaleRiga : q * (Number(r.prezzoUnitario) || 0)), style: 'cellaImporto' }
@@ -70,6 +86,7 @@ export async function generaPdf(fattura, impostazioni) {
 
   // Riepilogo importi.
   const riepilogo = []
+
   if (fattura.rivalsaInps) {
     riepilogo.push({
       columns: [
@@ -78,6 +95,7 @@ export async function generaPdf(fattura, impostazioni) {
       ],
       margin: [0, 8, 0, 0]
     })
+
     riepilogo.push({
       columns: [
         { text: `Rivalsa ${fattura.percentualeRivalsa || imp.percentualeRivalsaInps || 4}% GS INPS su ${euro(fattura.imponibile)}`, width: '*', style: 'riepEtichetta' },
@@ -86,6 +104,7 @@ export async function generaPdf(fattura, impostazioni) {
       margin: [0, 4, 0, 0]
     })
   }
+
   if (fattura.marcaDaBollo) {
     riepilogo.push({
       columns: [
@@ -95,6 +114,7 @@ export async function generaPdf(fattura, impostazioni) {
       margin: [0, 4, 0, 0]
     })
   }
+
   riepilogo.push({
     columns: [
       { text: '', width: '*' },
@@ -105,6 +125,7 @@ export async function generaPdf(fattura, impostazioni) {
 
   // Footer: pagamento + note.
   const pagamentoLines = []
+
   if ((fattura.modalitaPagamento || '').toLowerCase().includes('paypal')) {
     pagamentoLines.push({ text: 'PayPal', style: 'datiRiga' })
     pagamentoLines.push({ text: `E-mail: ${imp.email || ''}`, style: 'datiRiga' })
@@ -115,14 +136,17 @@ export async function generaPdf(fattura, impostazioni) {
   } else {
     pagamentoLines.push({ text: fattura.modalitaPagamento || '—', style: 'datiRiga' })
   }
+
   if (fattura.scadenzaPagamento) {
     pagamentoLines.push({ text: `Scadenza: ${formatData(fattura.scadenzaPagamento)}`, style: 'datiRiga' })
   }
 
   const noteLines = [{ text: imp.dicituraRegime || '', style: 'datiRiga' }]
+
   if ((fattura.marcaDaBollo || bolloDovuto(fattura, imp)) && imp.testoBollo) {
     noteLines.push({ text: imp.testoBollo, style: 'datiRiga', margin: [0, 6, 0, 0] })
   }
+
   if (fattura.note) {
     noteLines.push({ text: fattura.note, style: 'datiRiga', margin: [0, 6, 0, 0] })
   }

@@ -3,6 +3,7 @@
 // Formatta un numero come valuta euro italiana: 1234.5 -> "€ 1.234,50"
 export function formatEuro(n) {
   const v = Number(n) || 0
+
   return (
     '€ ' +
     v.toLocaleString('it-IT', {
@@ -14,9 +15,16 @@ export function formatEuro(n) {
 
 // Formatta una data ISO (AAAA-MM-GG) in gg/mm/aaaa.
 export function formatData(iso) {
-  if (!iso) return ''
+  if (!iso) {
+    return ''
+  }
+
   const parti = String(iso).slice(0, 10).split('-')
-  if (parti.length !== 3) return iso
+
+  if (parti.length !== 3) {
+    return iso
+  }
+
   return `${parti[2]}/${parti[1]}/${parti[0]}`
 }
 
@@ -25,6 +33,7 @@ export function oggiISO() {
   const d = new Date()
   const m = String(d.getMonth() + 1).padStart(2, '0')
   const g = String(d.getDate()).padStart(2, '0')
+
   return `${d.getFullYear()}-${m}-${g}`
 }
 
@@ -37,18 +46,32 @@ export function round2(n) {
 
 // Partita IVA italiana: 11 cifre con checksum (algoritmo ufficiale Luhn-like).
 export function validaPartitaIVA(piva) {
-  if (!piva) return false
+  if (!piva) {
+    return false
+  }
+
   const v = String(piva).trim()
-  if (!/^\d{11}$/.test(v)) return false
+
+  if (!/^\d{11}$/.test(v)) {
+    return false
+  }
+
   let somma = 0
+
   for (let i = 0; i < 11; i++) {
     let cifra = parseInt(v[i], 10)
+
     if (i % 2 === 1) {
       cifra *= 2
-      if (cifra > 9) cifra -= 9
+
+      if (cifra > 9) {
+        cifra -= 9
+      }
     }
+
     somma += cifra
   }
+
   return somma % 10 === 0
 }
 
@@ -60,26 +83,40 @@ const CF_PARI = {
   T: 19, U: 20, V: 21, W: 22, X: 23, Y: 24, Z: 25,
   0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9
 }
+
 const CF_DISPARI = {
   A: 1, B: 0, C: 5, D: 7, E: 9, F: 13, G: 15, H: 17, I: 19, J: 21,
   K: 2, L: 4, M: 18, N: 20, O: 11, P: 3, Q: 6, R: 8, S: 12, T: 14,
   U: 16, V: 10, W: 22, X: 25, Y: 24, Z: 23,
   0: 1, 1: 0, 2: 5, 3: 7, 4: 9, 5: 13, 6: 15, 7: 17, 8: 19, 9: 21
 }
+
 const CF_RESTO = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 export function validaCodiceFiscale(cf) {
-  if (!cf) return false
+  if (!cf) {
+    return false
+  }
+
   const v = String(cf).trim().toUpperCase()
+
   // Azienda: può coincidere con la P.IVA.
-  if (/^\d{11}$/.test(v)) return validaPartitaIVA(v)
+  if (/^\d{11}$/.test(v)) {
+    return validaPartitaIVA(v)
+  }
+
   // Persona fisica: 16 caratteri alfanumerici.
-  if (!/^[A-Z0-9]{16}$/.test(v)) return false
+  if (!/^[A-Z0-9]{16}$/.test(v)) {
+    return false
+  }
+
   let somma = 0
+
   for (let i = 0; i < 15; i++) {
     const c = v[i]
     somma += (i % 2 === 0 ? CF_DISPARI : CF_PARI)[c]
   }
+
   return CF_RESTO[somma % 26] === v[15]
 }
 

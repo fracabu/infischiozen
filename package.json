@@ -1,0 +1,29 @@
+{
+  "name": "infischiozen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fatturazione per partite IVA in regime forfettario: clienti, fatture, PDF e XML FatturaPA",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,green \"npm:api\" \"vite\"",
+    "api": "node server/index.mjs",
+    "web": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "db:schema": "node scripts/applica_schema.mjs"
+  },
+  "dependencies": {
+    "@heroicons/vue": "^2.2.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "express": "^5.2.1",
+    "pdfmake": "^0.2.12",
+    "pinia": "^2.3.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "concurrently": "^10.0.5",
+    "vite": "^6.0.7"
+  }
+}

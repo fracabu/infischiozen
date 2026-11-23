@@ -1,0 +1,46 @@
+{
+  "app": {
+    "name": "infischiozen",
+    "tagline": "Gestionale",
+    "taxRegime": "Regime forfettario",
+    "mainNavigation": "Navigazione principale"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "clients": "Clienti",
+    "products": "Prodotti & Servizi",
+    "invoices": "Fatture",
+    "settings": "Impostazioni"
+  },
+  "common": {
+    "confirm": "Conferma",
+    "cancel": "Annulla",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "actions": "Azioni",
+    "empty": "-"
+  },
+  "clientType": {
+    "privato": "Privato",
+    "azienda": "Azienda",
+    "pa": "PA"
+  },
+  "clients": {
+    "title": "Clienti",
+    "new": "+ Nuovo cliente",
+    "searchLabel": "Cerca clienti",
+    "searchPlaceholder": "Cerca per nome, ragione sociale, P.IVA, città...",
+    "listLabel": "Elenco clienti",
+    "column": {
+      "name": "Nome / Ragione sociale",
+      "type": "Tipo",
+      "taxId": "P.IVA / C.F.",
+      "city": "Città",
+      "email": "Email"
+    },
+    "noMatch": "Nessun cliente corrisponde alla ricerca.",
+    "noneYet": "Nessun cliente ancora. Aggiungi il primo cliente per iniziare.",
+    "deleteTitle": "Elimina cliente",
+    "deleteMessage": "Eliminare definitivamente «{name}»? Le fatture già emesse non verranno modificate."
+  }
+}

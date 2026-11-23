@@ -3,19 +3,22 @@
  * Modal confirmation built on the native <dialog> element: focus trapping,
  * Escape to close and the backdrop come from the browser.
  * Emits `confirm` or `cancel`; the parent decides whether to unmount it.
+ * Empty labels fall back to the common translated ones.
  */
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import './_ConfirmDialog.css'
 
 defineProps({
-  title: { type: String, default: 'Conferma' },
+  title: { type: String, default: '' },
   message: { type: String, default: '' },
-  confirmLabel: { type: String, default: 'Conferma' },
-  cancelLabel: { type: String, default: 'Annulla' },
+  confirmLabel: { type: String, default: '' },
+  cancelLabel: { type: String, default: '' },
   danger: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['confirm', 'cancel'])
+const { t } = useI18n()
 const dialog = ref(null)
 
 onMounted(() => {
@@ -44,21 +47,21 @@ function onBackdropClick(event) {
       @click="onBackdropClick"
     >
       <h2 id="confirm-dialog-title">
-        {{ title }}
+        {{ title || t('common.confirm') }}
       </h2>
       <p data-part="message">
         {{ message }}
       </p>
       <footer data-part="actions">
         <button type="button" @click="emit('cancel')">
-          {{ cancelLabel }}
+          {{ cancelLabel || t('common.cancel') }}
         </button>
         <button
           type="button"
           :data-variant="danger ? 'danger' : 'primary'"
           @click="emit('confirm')"
         >
-          {{ confirmLabel }}
+          {{ confirmLabel || t('common.confirm') }}
         </button>
       </footer>
     </dialog>

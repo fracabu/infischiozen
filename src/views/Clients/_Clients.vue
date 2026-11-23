@@ -4,19 +4,18 @@
  */
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useClientiStore } from '../../stores/clienti'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import './_Clients.css'
 
 const router = useRouter()
+const { t } = useI18n()
 const store = useClientiStore()
 const query = ref('')
 const toDelete = ref(null)
 
 onMounted(() => store.carica())
-
-/** Labels shown in the client type badge. */
-const typeLabels = { privato: 'Privato', azienda: 'Azienda', pa: 'PA' }
 
 /**
  * Display name: surname and name for a person, company name otherwise.
@@ -66,43 +65,43 @@ async function confirmDelete() {
 <template>
   <article data-part="clients">
     <header data-part="page-header">
-      <h1>Clienti</h1>
+      <h1>{{ t('clients.title') }}</h1>
       <button type="button" data-variant="primary" @click="router.push({ name: 'cliente-nuovo' })">
-        + Nuovo cliente
+        {{ t('clients.new') }}
       </button>
     </header>
 
     <search data-part="search">
-      <label for="clients-search" data-visually-hidden>Cerca clienti</label>
+      <label for="clients-search" data-visually-hidden>{{ t('clients.searchLabel') }}</label>
       <input
         id="clients-search"
         v-model="query"
         type="search"
-        placeholder="Cerca per nome, ragione sociale, P.IVA, città..."
+        :placeholder="t('clients.searchPlaceholder')"
       >
     </search>
 
-    <section data-part="list" aria-label="Elenco clienti">
+    <section data-part="list" :aria-label="t('clients.listLabel')">
       <table v-if="filtered.length > 0">
         <thead>
           <tr>
             <th scope="col">
-              Nome / Ragione sociale
+              {{ t('clients.column.name') }}
             </th>
             <th scope="col">
-              Tipo
+              {{ t('clients.column.type') }}
             </th>
             <th scope="col">
-              P.IVA / C.F.
+              {{ t('clients.column.taxId') }}
             </th>
             <th scope="col">
-              Città
+              {{ t('clients.column.city') }}
             </th>
             <th scope="col">
-              Email
+              {{ t('clients.column.email') }}
             </th>
             <th scope="col">
-              <span data-visually-hidden>Azioni</span>
+              <span data-visually-hidden>{{ t('common.actions') }}</span>
             </th>
           </tr>
         </thead>
@@ -114,14 +113,14 @@ async function confirmDelete() {
               </router-link>
             </th>
             <td>
-              <span data-part="badge" :data-kind="client.tipo">{{ typeLabels[client.tipo] }}</span>
+              <span data-part="badge" :data-kind="client.tipo">{{ t(`clientType.${client.tipo}`) }}</span>
             </td>
-            <td>{{ client.partitaIVA || client.codiceFiscale || '-' }}</td>
-            <td>{{ client.citta || '-' }}</td>
-            <td>{{ client.email || '-' }}</td>
+            <td>{{ client.partitaIVA || client.codiceFiscale || t('common.empty') }}</td>
+            <td>{{ client.citta || t('common.empty') }}</td>
+            <td>{{ client.email || t('common.empty') }}</td>
             <td data-part="actions" @click.stop>
               <button type="button" data-variant="ghost" data-size="small" @click="openClient(client)">
-                Modifica
+                {{ t('common.edit') }}
               </button>
               <button
                 type="button"
@@ -130,25 +129,25 @@ async function confirmDelete() {
                 data-tone="danger"
                 @click="toDelete = client"
               >
-                Elimina
+                {{ t('common.delete') }}
               </button>
             </td>
           </tr>
         </tbody>
       </table>
       <p v-else-if="store.lista.length > 0" data-part="empty">
-        Nessun cliente corrisponde alla ricerca.
+        {{ t('clients.noMatch') }}
       </p>
       <p v-else data-part="empty">
-        Nessun cliente ancora. Aggiungi il primo cliente per iniziare.
+        {{ t('clients.noneYet') }}
       </p>
     </section>
 
     <ConfirmDialog
       v-if="toDelete"
-      title="Elimina cliente"
-      :message="`Eliminare definitivamente «${clientName(toDelete)}»? Le fatture già emesse non verranno modificate.`"
-      confirm-label="Elimina"
+      :title="t('clients.deleteTitle')"
+      :message="t('clients.deleteMessage', { name: clientName(toDelete) })"
+      :confirm-label="t('common.delete')"
       danger
       @confirm="confirmDelete"
       @cancel="toDelete = null"

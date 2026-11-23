@@ -22,6 +22,8 @@ export default defineConfig([
       "no-console": "off",
       "prefer-const": "error",
       "unicorn/prevent-abbreviations": "off",
+      // rule-mcp file tree: PascalCase component folders, camelCase modules.
+      "unicorn/filename-case": ["error", { cases: { kebabCase: true, camelCase: true, pascalCase: true } }],
       // JSDoc keeps its leading asterisks: rule-mcp requires JSDoc blocks.
       "unicorn/no-asterisk-prefix-in-documentation-comments": "off",
       "@stylistic/brace-style": ["error", "1tbs", { allowSingleLine: false }],

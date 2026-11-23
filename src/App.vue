@@ -1,26 +1,29 @@
 <script setup>
+/**
+ * Root layout: sidebar plus the routed page. On first launch (seller data
+ * never confirmed) the dashboard redirects to the settings page.
+ */
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import AppSidebar from './components/AppSidebar.vue'
+import { AppSidebar } from './components/AppSidebar'
 import { useImpostazioniStore } from './stores/impostazioni'
+import './App.css'
 
 const router = useRouter()
-const impostazioni = useImpostazioniStore()
+const settings = useImpostazioniStore()
 
 onMounted(async () => {
-  await impostazioni.carica()
-  // Se i dati cedente non sono mai stati confermati, suggerisci Impostazioni.
-  if (impostazioni.primoAvvio && router.currentRoute.value.name === 'dashboard') {
+  await settings.carica()
+
+  if (settings.primoAvvio && router.currentRoute.value.name === 'dashboard') {
     router.replace({ name: 'impostazioni', query: { benvenuto: '1' } })
   }
 })
 </script>
 
 <template>
-  <div class="app-layout">
-    <AppSidebar />
-    <main class="app-main">
-      <router-view />
-    </main>
-  </div>
+  <AppSidebar />
+  <main data-part="page">
+    <router-view />
+  </main>
 </template>

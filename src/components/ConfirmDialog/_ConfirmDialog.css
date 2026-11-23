@@ -1,0 +1,38 @@
+/**
+ * FILE: _ConfirmDialog.css
+ * USAGE: Styles for ConfirmDialog
+ * SCOPE: dialog[data-part="confirm-dialog"]
+ */
+
+/* ─── Dialog ─── */
+dialog[data-part="confirm-dialog"] {
+  width: min(420px, 90vw);
+  margin: auto;
+  padding: 24px;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 50px rgb(0 0 0 / 25%);
+}
+
+dialog[data-part="confirm-dialog"]::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+dialog[data-part="confirm-dialog"] h2 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+dialog[data-part="confirm-dialog"] [data-part="message"] {
+  color: var(--color-muted);
+}
+
+/* ─── Actions ─── */
+dialog[data-part="confirm-dialog"] footer[data-part="actions"] {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

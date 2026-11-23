@@ -1,0 +1,23 @@
+/**
+ * FILE: App.css
+ * USAGE: Styles for the root layout (App.vue)
+ * SCOPE: #app, main[data-part="page"]
+ */
+
+/* ─── Layout: sidebar beside the page ─── */
+#app {
+  display: flex;
+  min-height: 100vh;
+}
+
+main[data-part="page"] {
+  flex: 1;
+  max-width: 1200px;
+  padding: 32px 40px;
+}
+
+@media (width <= 720px) {
+  main[data-part="page"] {
+    padding: 20px;
+  }
+}

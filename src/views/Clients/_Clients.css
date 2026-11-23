@@ -1,0 +1,64 @@
+/**
+ * FILE: _Clients.css
+ * USAGE: Styles for the Clients view
+ * SCOPE: article[data-part="clients"]
+ */
+
+/* ─── Search ─── */
+article[data-part="clients"] search[data-part="search"] {
+  display: flex;
+  margin-bottom: 18px;
+}
+
+article[data-part="clients"] search input {
+  flex: 1;
+  min-width: 200px;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* ─── List card ─── */
+article[data-part="clients"] section[data-part="list"] {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+article[data-part="clients"] tbody th {
+  padding: 12px;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+article[data-part="clients"] tbody tr {
+  cursor: pointer;
+}
+
+article[data-part="clients"] tbody tr:hover {
+  background: var(--color-bg);
+}
+
+article[data-part="clients"] tbody tr:last-child th {
+  border-bottom: none;
+}
+
+article[data-part="clients"] td[data-part="actions"] {
+  text-align: right;
+  white-space: nowrap;
+}
+
+article[data-part="clients"] button[data-tone="danger"] {
+  color: var(--color-error);
+}
+
+/* ─── Empty state ─── */
+article[data-part="clients"] [data-part="empty"] {
+  padding: 60px 20px;
+  color: var(--color-muted);
+  text-align: center;
+}

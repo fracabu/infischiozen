@@ -1,0 +1,90 @@
+/**
+ * FILE: _AppSidebar.css
+ * USAGE: Styles for AppSidebar
+ * SCOPE: aside[data-part="sidebar"]
+ */
+
+/* ─── Container ─── */
+aside[data-part="sidebar"] {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 248px;
+  height: 100vh;
+  color: var(--color-sidebar-text);
+  background: var(--color-sidebar-bg);
+}
+
+/* ─── Brand ─── */
+aside[data-part="sidebar"] header[data-part="brand"] {
+  padding: 24px 22px;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+}
+
+aside[data-part="sidebar"] [data-part="brand-name"] {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+aside[data-part="sidebar"] [data-part="brand-tagline"] {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #8e8e98;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Navigation ─── */
+aside[data-part="sidebar"] ul[data-part="entries"] {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 12px;
+  list-style: none;
+}
+
+aside[data-part="sidebar"] nav a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  font-weight: 500;
+  color: var(--color-sidebar-text);
+  border-radius: 8px;
+  transition: background 0.12s, color 0.12s;
+}
+
+aside[data-part="sidebar"] nav a:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 6%);
+}
+
+aside[data-part="sidebar"] nav a[aria-current="page"] {
+  font-weight: 600;
+  color: var(--color-ink);
+  background: var(--color-accent);
+}
+
+aside[data-part="sidebar"] [data-part="icon"] {
+  display: flex;
+  flex-shrink: 0;
+}
+
+aside[data-part="sidebar"] [data-part="icon"] svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.7;
+}
+
+/* ─── Footer ─── */
+aside[data-part="sidebar"] footer[data-part="footer"] {
+  margin-top: auto;
+  padding: 18px 22px;
+  font-size: 12px;
+  color: #8e8e98;
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}

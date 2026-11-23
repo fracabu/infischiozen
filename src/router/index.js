@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   { path: '/', name: 'dashboard', component: () => import('../views/Dashboard.vue') },
-  { path: '/clienti', name: 'clienti', component: () => import('../views/Clienti.vue') },
+  { path: '/clienti', name: 'clienti', component: () => import('../views/Clients').then((m) => m.Clients) },
   { path: '/clienti/nuovo', name: 'cliente-nuovo', component: () => import('../views/ClienteForm.vue') },
   { path: '/clienti/:id', name: 'cliente-modifica', component: () => import('../views/ClienteForm.vue'), props: true },
   { path: '/prodotti', name: 'prodotti', component: () => import('../views/Prodotti.vue') },

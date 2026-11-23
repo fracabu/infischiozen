@@ -30,60 +30,6 @@ html, body {
 
 a { color: inherit; text-decoration: none; }
 
-/* ---------- Layout ---------- */
-.app-layout { display: flex; min-height: 100vh; }
-.app-main { flex: 1; padding: 32px 40px; max-width: 1200px; }
-
-/* ---------- Sidebar ---------- */
-.sidebar {
-  width: 248px;
-  background: var(--sidebar-bg);
-  color: var(--sidebar-testo);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
-.sidebar-brand {
-  padding: 24px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-.sidebar-brand .marchio { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
-.sidebar-brand .sottotitolo {
-  font-size: 12px;
-  color: #74747e;
-  margin-top: 6px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.sidebar-nav { padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; }
-.sidebar-nav a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  color: var(--sidebar-testo);
-  font-weight: 500;
-  transition: background 0.12s, color 0.12s;
-}
-.sidebar-nav a:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
-.sidebar-nav a.attivo {
-  background: var(--giallo);
-  color: var(--ink);
-  font-weight: 600;
-}
-.sidebar-nav .icona { width: 20px; height: 20px; flex-shrink: 0; stroke-width: 1.7; }
-.sidebar-footer {
-  margin-top: auto;
-  padding: 18px 22px;
-  font-size: 12px;
-  color: #5a5a64;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 /* ---------- Tipografia ---------- */
 .page-header {
   display: flex;
@@ -238,27 +184,6 @@ tbody tr.cliccabile:hover { background: var(--bg); }
   font-family: inherit;
 }
 .toolbar .ricerca { flex: 1; min-width: 200px; }
-
-/* ---------- Modale ---------- */
-.modale-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-.modale {
-  background: var(--surface);
-  border-radius: var(--raggio);
-  padding: 24px;
-  max-width: 420px;
-  width: 90%;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-}
-.modale h3 { margin-bottom: 10px; }
-.modale .azioni { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
 
 /* ---------- Wizard step ---------- */
 .wizard-steps {
@@ -532,6 +457,5 @@ tbody tr.cliccabile:hover { background: var(--bg); }
 
 @media (max-width: 720px) {
   .form-griglia { grid-template-columns: 1fr; }
-  .app-main { padding: 20px; }
   .grafici-griglia { grid-template-columns: 1fr; }
 }

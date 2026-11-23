@@ -52,8 +52,10 @@ reale**: è il primo test da fare con un Neon nuovo e vuoto.
   fattura c'è PayPal o contanti.
 - **Nessuna autenticazione sulle API**: oggi va bene perché il server ascolta
   solo su 127.0.0.1. Prima di metterlo online serve un login.
-- **Nessun test automatico**: `calcoloFattura`, `generaXml` e le validazioni di
-  CF/P.IVA sono funzioni pure, i primi candidati per Vitest.
+- **Test solo sulle funzioni pure**: `calcoloFattura`, `generaXml` e le
+  validazioni di CF/P.IVA hanno 43 test Vitest (`npm test`), compresi i bug
+  #2, #3, #5 e #16. Server e query non hanno ancora test: servono un database
+  di prova.
 - **Bundle**: `FatturaDettaglio` pesa 2,2 MB perché include pdfmake con i
   font. Si può caricare pdfmake solo quando si genera il PDF (`import()`).
 - **XML da validare**: il tracciato va provato con il validatore ufficiale

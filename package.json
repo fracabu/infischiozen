@@ -10,7 +10,9 @@
     "web": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "db:schema": "node scripts/applica_schema.mjs"
+    "db:schema": "node scripts/applica_schema.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "concurrently": "^10.0.5",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vitest": "^3.2.7"
   }
 }

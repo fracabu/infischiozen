@@ -12,7 +12,7 @@
 //         npm run api   (da solo)
 // ============================================================================
 import express from 'express'
-import { connetti } from '../scripts/_db.mjs'
+import { connetti, applicaSchema } from '../scripts/_db.mjs'
 import { IMPOSTAZIONI_DEFAULT } from '../src/data/impostazioniDefault.js'
 import {
   clienteVersoApp, clienteVersoDb,
@@ -21,7 +21,10 @@ import {
 } from './mappa.mjs'
 
 const PORTA = Number(process.env.PORTA_API || 3001)
-const sql = connetti()
+const sql = await connetti()
+// Il database locale si prepara da solo: lo schema e' idempotente. Su Neon
+// resta un passo esplicito (npm run db:schema).
+if (sql.modalita === 'locale') await applicaSchema(sql)
 const app = express()
 app.use(express.json({ limit: '25mb' }))
 app.use('/api/fatture/:id/pdf', express.raw({ type: '*/*', limit: '25mb' }))
@@ -212,7 +215,8 @@ app.post('/api/fatture', h(async (req, res) => {
     }
     const r = await sql.query(
       `INSERT INTO fatture (numero, anno, numero_fattura, origine, stato, ${COLONNE_FATTURA})
-       VALUES ($1, $2, $1 || '/' || $2, 'esterna', $3, ${segnapostoFattura(4)})
+       VALUES ($1::int, $2::int, $1::int::text || '/' || $2::int::text, 'esterna', $3,
+               ${segnapostoFattura(4)})
        RETURNING ${CAMPI_FATTURA_NUDI}`,
       [numero, anno, stato === 'bozza' ? 'pagata' : stato, ...valoriFattura(f)])
     return res.status(201).json(fatturaVersoApp(r[0]))
@@ -382,4 +386,5 @@ app.put('/api/impostazioni', h(async (req, res) => {
 
 app.listen(PORTA, '127.0.0.1', () => {
   console.log(`[api] infischiozen in ascolto su http://127.0.0.1:${PORTA}`)
+  console.log(`[api] database: ${sql.modalita === 'neon' ? 'Neon' : 'locale in ' + sql.cartella}`)
 })

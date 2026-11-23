@@ -5,15 +5,15 @@
 Anagrafica clienti, catalogo servizi, fatture con il calcolo automatico di
 rivalsa INPS e marca da bollo, PDF di cortesia e **XML FatturaPA 1.2** pronto
 per il Sistema di Interscambio (SdI). Senza abbonamenti: l'app gira sul tuo
-computer e i dati stanno nel **tuo** database.
+computer e i dati restano lì: **nessun account, nessun cloud**.
 
 ![Vue 3](https://img.shields.io/badge/Vue-3-42b883)
 ![Node 20+](https://img.shields.io/badge/Node-20%2B-339933)
-![Postgres su Neon](https://img.shields.io/badge/DB-Neon%20Postgres-00e599)
+![Postgres locale](https://img.shields.io/badge/DB-Postgres%20locale%20(PGlite)-336791)
 ![Stato: in sviluppo](https://img.shields.io/badge/stato-in%20sviluppo-orange)
 
-> ⚠️ **Progetto giovane.** Calcoli e XML sono stati rivisti e provati in build,
-> ma non ancora su un database nuovo né con il validatore ufficiale FatturaPA.
+> ⚠️ **Progetto giovane.** Calcoli, XML e API sono stati provati, ma l'XML non
+> è ancora passato dal validatore ufficiale FatturaPA.
 > Leggi [Stato del progetto](#stato-del-progetto) prima di emettere fatture vere.
 
 ---
@@ -51,17 +51,25 @@ computer e i dati stanno nel **tuo** database.
 ## Come funziona
 
 ```
-  Browser                 Vite (dev)                Server Node               Neon
-┌──────────┐   /api/…   ┌────────────┐   proxy    ┌──────────────────┐  HTTP  ┌──────────┐
-│ App Vue 3│ ─────────▶ │ :5173      │ ─────────▶ │ Express          │ ─────▶ │ Postgres │
-│ Pinia    │            │            │            │ 127.0.0.1:3001   │        │ (tuo DB) │
-└──────────┘            └────────────┘            └──────────────────┘        └──────────┘
-                                                  conosce DATABASE_URL
+  Browser                 Vite (dev)                Server Node            Database
+┌──────────┐   /api/…   ┌────────────┐   proxy    ┌──────────────────┐     ┌────────────────┐
+│ App Vue 3│ ─────────▶ │ :5173      │ ─────────▶ │ Express          │ ──▶ │ PGlite in dati/│
+│ Pinia    │            │            │            │ 127.0.0.1:3001   │     │ oppure Neon    │
+└──────────┘            └────────────┘            └──────────────────┘     └────────────────┘
 ```
 
-Il browser non parla mai direttamente con il database: la connection string
-resta nel processo Node, che ascolta solo su `127.0.0.1` e non è raggiungibile
-da fuori. Così nessun segreto finisce nel bundle JavaScript.
+Il database predefinito è [PGlite](https://pglite.dev): un Postgres vero che
+gira dentro il processo Node e salva i dati nella cartella `dati/` (esclusa da
+git). Lo schema si applica da solo all'avvio. Per un backup basta copiare
+quella cartella a server spento.
+
+Se preferisci i dati in cloud, imposta `DATABASE_URL` con una connection string
+[Neon](https://neon.tech) (scegli una regione UE): l'app usa Neon al posto di
+PGlite, con le stesse query.
+
+Il browser non parla mai direttamente con il database: il server ascolta solo
+su `127.0.0.1`, non è raggiungibile da fuori, e un'eventuale connection string
+resta nel processo Node, mai nel bundle JavaScript.
 
 PDF e XML si generano nel browser (`pdfmake` e un generatore XML scritto a mano
 in `src/lib/generaXml.js`).
@@ -70,12 +78,7 @@ in `src/lib/generaXml.js`).
 
 **Requisiti**
 
-- Node.js 20 o superiore
-- Un database [Neon](https://neon.tech) (Postgres). Basta il piano gratuito.
-  Scegli una **regione UE**: ci finiscono i dati fiscali dei tuoi clienti.
-
-> Il driver `@neondatabase/serverless` parla HTTP e funziona solo con Neon.
-> Per un Postgres qualsiasi va sostituito con `pg` in `scripts/_db.mjs`.
+- Node.js 20 o superiore. Nient'altro: il database è incluso.
 
 **Installazione**
 
@@ -83,17 +86,16 @@ in `src/lib/generaXml.js`).
 git clone https://github.com/fracabu/infischiozen.git
 cd infischiozen
 npm install
-
-cp .env.example .env.local    # poi metti la TUA connection string in .env.local
-npm run db:schema             # crea le tabelle (si può rilanciare senza danni)
 npm run dev                   # API su :3001 + interfaccia su http://localhost:5173
 ```
 
-**Variabili d'ambiente** (in `.env.local`, escluso da git)
+**Variabili d'ambiente** (tutte facoltative; in `.env.local`, escluso da git;
+parti da `.env.example`)
 
 | Variabile | Obbligatoria | Descrizione |
 |-----------|:---:|-------------|
-| `DATABASE_URL` | sì | Connection string Neon (`postgresql://…?sslmode=require`). In alternativa `POSTGRES_URL`. |
+| `DATABASE_URL` | no | Connection string Neon (`postgresql://…?sslmode=require`). Se c'è, si usa Neon al posto del database locale, e lo schema si crea con `npm run db:schema`. In alternativa `POSTGRES_URL`. |
+| `CARTELLA_DATI` | no | Dove PGlite salva i dati. Predefinita: `dati/` nel progetto. |
 | `PORTA_API` | no | Porta del server API. Predefinita: `3001`. Se la cambi, aggiorna anche il proxy in `vite.config.js`. |
 
 **Script npm**
@@ -107,7 +109,7 @@ npm run dev                   # API su :3001 + interfaccia su http://localhost:5
 | `npm run test:watch` | Test in modalità watch |
 | `npm run build` | Build di produzione in `dist/` |
 | `npm run preview` | Anteprima della build |
-| `npm run db:schema` | Applica `db/schema.sql` al database (idempotente) |
+| `npm run db:schema` | Applica `db/schema.sql` (serve solo con Neon: in locale lo fa il server all'avvio) |
 
 ## Primo avvio
 
@@ -175,7 +177,7 @@ Un numero già usato restituisce `409` con la spiegazione, non un errore generic
 
 ```
 db/schema.sql           schema completo del database (idempotente)
-scripts/_db.mjs         connessione a Neon (legge DATABASE_URL o .env.local)
+scripts/_db.mjs         connessione: PGlite locale, oppure Neon se c'è DATABASE_URL
 scripts/applica_schema.mjs
 server/index.mjs        API Express, in ascolto solo su 127.0.0.1
 server/mappa.mjs        traduzione fra righe del DB e oggetti dell'app
@@ -192,7 +194,7 @@ tests/                  test Vitest delle funzioni pure (calcolo, XML, validazio
 ```
 
 **Stack:** Vue 3 · Vite · Pinia · Vue Router · Express 5 · Postgres
-(`@neondatabase/serverless`) · pdfmake · Heroicons.
+(PGlite, oppure `@neondatabase/serverless`) · pdfmake · Heroicons.
 
 ## Stato del progetto
 
@@ -203,9 +205,10 @@ noti ancora aperti. In breve:
 - ✅ build di produzione provata;
 - ✅ **43 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
   XML FatturaPA e validazioni di CF/P.IVA, compresi i bug già corretti;
-- ⏳ query del server **non ancora provate** su un database nuovo e vuoto;
+- ✅ API provate su un database vuoto: clienti, bozze, numerazione, ordine
+  delle date, fatture esterne, PDF allegati, annullamento;
 - ⏳ XML **non ancora passato** dal validatore ufficiale FatturaPA;
-- ❌ nessun test sul server e sulle query (servono un database di prova);
+- ⏳ la prova delle API non è ancora un test automatico nel repository;
 - ❌ nessuna autenticazione: va bene in locale, non online;
 - la modalità di pagamento nell'XML è sempre bonifico (MP05).
 
@@ -214,7 +217,7 @@ noti ancora aperti. In breve:
 L'obiettivo è coprire quello che serve a un forfettario per non pagare un
 servizio esterno:
 
-- [ ] test del server su un database di prova
+- [ ] test automatici delle API su un database PGlite temporaneo
 - [ ] invio allo SdI via PEC e lettura delle ricevute (consegna, scarto)
 - [ ] note di credito (TD04) per correggere una fattura emessa
 - [ ] stima di imposta sostitutiva e contributi INPS sull'incassato, con le
@@ -226,7 +229,9 @@ servizio esterno:
 
 ## Contribuire
 
-Segnalazioni e pull request sono benvenute, soprattutto su:
+Segnalazioni e pull request sono benvenute: leggi prima
+[CONTRIBUTING.md](CONTRIBUTING.md) (ambiente, stile del codice, test). Servono
+soprattutto:
 
 - casi fiscali che l'app gestisce male (con l'esempio, **senza dati reali**);
 - XML scartati dallo SdI o dal validatore, con il messaggio di errore;

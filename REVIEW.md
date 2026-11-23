@@ -4,9 +4,9 @@ Questo progetto nasce da un gestionale personale. Prima di renderlo generico ne
 abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
-Stato: **verificato con `vite build` e con una prova del generatore XML in
-Node. Le query del server non sono ancora state provate contro un database
-reale**: è il primo test da fare con un Neon nuovo e vuoto.
+Stato: **verificato con `vite build`, con 43 test Vitest sulle funzioni pure e
+con una prova di tutte le API su un database PGlite nuovo e vuoto** (23
+controlli). Quella prova ha trovato il bug #18.
 
 ## Bug corretti
 
@@ -29,6 +29,7 @@ reale**: è il primo test da fare con un Neon nuovo e vuoto.
 | 15 | Impostazioni | Si poteva scegliere il regime RF01 (ordinario) | Calcoli e XML sono solo da forfettario: con RF01 si generava un XML sbagliato | Solo RF19 |
 | 16 | Impostazioni | La dicitura di legge non aveva limite | Oltre i 100 caratteri di `RiferimentoNormativo` lo SdI scarta la fattura | Controllo sia in Impostazioni sia prima di generare l'XML |
 | 17 | server | Un numero già usato produceva un 500 generico | Messaggio incomprensibile | Risposta 409 con la spiegazione |
+| 18 | `POST /api/fatture` (esterne) | La query della correzione #7 usava `$1` sia come intero (`numero`) sia come testo (`$1 \|\| '/'`) | **Registrare una fattura esterna dava sempre 500** (`inconsistent types deduced for parameter $1`), su PGlite come su Neon | Cast espliciti `$1::int::text` |
 
 ## Cose tolte perché legate al progetto d'origine
 

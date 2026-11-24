@@ -15,6 +15,9 @@ yarn-error.log*
 !.env.example
 *.stackdump
 
+# impostazioni Claude Code di questa macchina (hook guard di rule-mcp con percorsi assoluti)
+.claude/settings.local.json
+
 # database locale (PGlite)
 dati/
 

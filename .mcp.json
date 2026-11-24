@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "rule-mcp": {
+      "command": "rule-mcp",
+      "args": [
+        "serve"
+      ]
+    }
+  }
+}

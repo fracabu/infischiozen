@@ -1,2 +1,4 @@
 # Git hooks run under sh: a CRLF line end breaks them on Windows checkout.
 .githooks/* text eol=lf
+docs/adr/ADR.md merge=rule-mcp-index
+docs/handoff/HANDOFF.md merge=rule-mcp-index

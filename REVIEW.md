@@ -4,7 +4,7 @@ Questo progetto nasce da un gestionale personale. Prima di renderlo generico ne
 abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
-Stato: **verificato con `vite build`, con 84 test Vitest sulle funzioni pure e
+Stato: **verificato con `vite build`, con 88 test Vitest sulle funzioni pure e
 con una prova di tutte le API su un database PGlite nuovo e vuoto** (23
 controlli). Quella prova ha trovato il bug #18.
 
@@ -57,7 +57,7 @@ controlli). Quella prova ha trovato il bug #18.
 - **Nessuna autenticazione sulle API**: oggi va bene perché il server ascolta
   solo su 127.0.0.1. Prima di metterlo online serve un login.
 - **Test solo sulle funzioni pure**: `calcoloFattura`, `generaXml` e le
-  validazioni di CF/P.IVA e gli schemi dei form hanno 84 test Vitest
+  validazioni di CF/P.IVA e gli schemi dei form hanno 88 test Vitest
   (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20 e #21. Server e query non hanno ancora test: servono un database
   di prova.
 - **Bundle**: `FatturaDettaglio` pesa 2,2 MB perché include pdfmake con i

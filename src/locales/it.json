@@ -270,5 +270,37 @@
       "number": "Inserisci il numero della fattura (intero, da 1 in su).",
       "status": "Scegli lo stato della fattura."
     }
+  },
+  "invoiceDetail": {
+    "title": "Fattura {number}",
+    "loading": "Caricamento...",
+    "createdHere": "Creata con l'app",
+    "actionsLabel": "Azioni sulla fattura",
+    "downloadPdf": "⬇ Scarica PDF",
+    "downloadXml": "⬇ Scarica XML FatturaPA",
+    "sendSdi": "Invia a SdI",
+    "deleteDraft": "Elimina bozza",
+    "sdiNote": "L'invio automatico al Sistema di Interscambio sarà disponibile in una versione futura. Per ora carica l'XML scaricato sul portale «Fatture e Corrispettivi» dell'Agenzia delle Entrate.",
+    "downloadAttachment": "⬇ Scarica PDF allegato",
+    "attachPdf": "Allega PDF",
+    "replacePdf": "Sostituisci PDF allegato",
+    "externalNote": "Questa fattura è stata emessa con un altro software o intermediario e registrata qui solo per il fatturato. Il documento fiscale ufficiale è quello dell'intermediario: l'app non genera PDF né XML per le fatture esterne.",
+    "attachmentName": "Fattura {number}-{year} (esterna).pdf",
+    "statusTitle": "Cambia stato",
+    "moveTo": "→ {status}",
+    "clientTitle": "Cliente",
+    "documentTitle": "Documento",
+    "taxCode": "C.F.: {value}",
+    "vatNumber": "P.IVA: {value}",
+    "date": "Data",
+    "payment": "Pagamento",
+    "dueDate": "Scadenza",
+    "linesLabel": "Righe della fattura",
+    "legalTitle": "Diciture di legge",
+    "notes": "Note:",
+    "xmlError": "Impossibile generare l'XML:",
+    "pdfError": "Errore nella generazione del PDF: {message}",
+    "deleteTitle": "Elimina bozza",
+    "deleteMessage": "Eliminare definitivamente questa bozza di fattura?"
   }
 }

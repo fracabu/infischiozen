@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { useFattureStore } from '../../stores/fatture'
 import { formatEuro, formatData } from '../../lib/format'
 import { clientName, invoiceNumber } from '../../lib/displayNames'
+import { invoiceStatuses } from '../../lib/invoiceStatus'
 import './_Invoices.css'
 
 const router = useRouter()
@@ -15,7 +16,6 @@ const { t } = useI18n()
 const store = useFattureStore()
 const year = ref('')
 const status = ref('')
-const statuses = ['bozza', 'emessa', 'inviata', 'pagata', 'annullata']
 
 onMounted(() => store.carica())
 
@@ -73,7 +73,7 @@ function openInvoice(invoice) {
         <option value="">
           {{ t('invoices.allStatuses') }}
         </option>
-        <option v-for="option in statuses" :key="option" :value="option">
+        <option v-for="option in invoiceStatuses" :key="option" :value="option">
           {{ t(`invoiceStatus.${option}`) }}
         </option>
       </select>

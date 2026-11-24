@@ -1,0 +1,98 @@
+/**
+ * FILE: _InvoiceDetail.css
+ * USAGE: Styles for the InvoiceDetail view. Cards, notices and badges come
+ *        from src/styles/base.css.
+ * SCOPE: article[data-part="invoice-detail"]
+ */
+
+/* ─── Header badges ─── */
+article[data-part="invoice-detail"] [data-part="badges"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ─── XML errors ─── */
+article[data-part="invoice-detail"] [data-part="xml-errors"] {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+article[data-part="invoice-detail"] [data-part="xml-errors"] ul {
+  margin: 6px 0 0 18px;
+}
+
+/* ─── Action buttons ─── */
+article[data-part="invoice-detail"] menu[data-part="buttons"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  list-style: none;
+}
+
+article[data-part="invoice-detail"] menu label {
+  margin-right: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+article[data-part="invoice-detail"] [data-part="note"] {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* ─── Client and document, side by side when there is room ─── */
+article[data-part="invoice-detail"] section[data-part="parties"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+}
+
+article[data-part="invoice-detail"] section[data-part="parties"] > section {
+  flex: 1 1 300px;
+}
+
+article[data-part="invoice-detail"] dl[data-part="facts"] {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+article[data-part="invoice-detail"] dl[data-part="facts"] dt {
+  flex: 0 0 90px;
+  padding: 2px 0;
+  color: var(--color-muted);
+}
+
+article[data-part="invoice-detail"] dl[data-part="facts"] dd {
+  flex: 1 1 calc(100% - 90px);
+  padding: 2px 0;
+  font-weight: 600;
+}
+
+/* ─── Lines ─── */
+article[data-part="invoice-detail"] section[data-part="lines"] {
+  margin-bottom: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+article[data-part="invoice-detail"] [data-align="end"] {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ─── Loading ─── */
+p[data-part="loading"] {
+  color: var(--color-muted);
+}

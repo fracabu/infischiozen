@@ -11,7 +11,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useClientiStore } from '../../stores/clienti'
 import { useFattureStore } from '../../stores/fatture'
 import { clientSchema, emptyClient } from '../../lib/clientSchema'
-import { formatEuro, formatData } from '../../lib/format'
+import { formatEuro, formatDate } from '../../lib/format'
 import { invoiceNumber } from '../../lib/displayNames'
 import './_ClientForm.css'
 
@@ -248,7 +248,7 @@ const onSubmit = handleSubmit(async (client) => {
               <router-link :to="{ name: 'fattura-dettaglio', params: { id: invoice.id } }">
                 {{ invoiceLabel(invoice) }}
               </router-link>
-              <time :datetime="invoice.data">{{ formatData(invoice.data) }}</time>
+              <time :datetime="invoice.data">{{ formatDate(invoice.data) }}</time>
               <data :value="invoice.totale">{{ formatEuro(invoice.totale) }}</data>
             </header>
             <ul data-part="lines">

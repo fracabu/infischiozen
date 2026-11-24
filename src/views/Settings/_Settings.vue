@@ -9,7 +9,7 @@ import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useImpostazioniStore } from '../../stores/impostazioni'
-import { IMPOSTAZIONI_DEFAULT } from '../../data/impostazioniDefault'
+import { DEFAULT_SETTINGS } from '../../data/defaultSettings'
 import { settingsSchema, LEGAL_TEXT_MAX } from '../../lib/settingsSchema'
 import './_Settings.css'
 
@@ -26,7 +26,7 @@ const taxRegimes = ['RF19']
 
 const { defineField, handleSubmit, errors, isSubmitting, submitCount, resetForm, values, setFieldValue } = useForm({
   validationSchema: toTypedSchema(settingsSchema),
-  initialValues: { ...IMPOSTAZIONI_DEFAULT },
+  initialValues: { ...DEFAULT_SETTINGS },
 })
 
 /**
@@ -91,7 +91,7 @@ const currentYear = new Date().getFullYear()
 
 onMounted(async () => {
   await store.carica()
-  resetForm({ values: { ...IMPOSTAZIONI_DEFAULT, ...store.dati } })
+  resetForm({ values: { ...DEFAULT_SETTINGS, ...store.dati } })
   loaded.value = true
 })
 
@@ -164,7 +164,7 @@ const onSubmit = handleSubmit(async (settings) => {
 
   try {
     await store.salva(settings)
-    resetForm({ values: { ...IMPOSTAZIONI_DEFAULT, ...store.dati } })
+    resetForm({ values: { ...DEFAULT_SETTINGS, ...store.dati } })
     saved.value = true
     welcome.value = false
     window.scrollTo({ top: 0, behavior: 'smooth' })

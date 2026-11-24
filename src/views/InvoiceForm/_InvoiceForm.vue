@@ -14,8 +14,8 @@ import { useProdottiStore } from '../../stores/prodotti'
 import { useFattureStore } from '../../stores/fatture'
 import { useImpostazioniStore } from '../../stores/impostazioni'
 import { invoiceDraftSchema, emptyLine, buildInvoice } from '../../lib/invoiceDraft'
-import { calcolaFattura, totaleRiga } from '../../lib/calcoloFattura'
-import { formatEuro, oggiISO } from '../../lib/format'
+import { computeInvoice, lineTotal } from '../../lib/invoiceMath'
+import { formatEuro, todayIso } from '../../lib/format'
 import { clientName } from '../../lib/displayNames'
 import { InvoiceLines } from '../../components/InvoiceLines'
 import { InvoiceTotals } from '../../components/InvoiceTotals'
@@ -38,7 +38,7 @@ const { defineField, handleSubmit, errors, isSubmitting, validateField, setField
   initialValues: {
     clienteId: '',
     righe: [emptyLine()],
-    data: oggiISO(),
+    data: todayIso(),
     modalitaPagamento: 'Bonifico',
     scadenzaPagamento: '',
     note: '',
@@ -66,7 +66,7 @@ const rivalsaPercent = computed(() => settings.value.percentualeRivalsaInps || 4
 const client = computed(() => clientStore.lista.find((item) => String(item.id) === String(clientId.value)))
 const filledLines = computed(() => lines.value.filter((line) => line.descrizione))
 // Only lines with a description are saved, so only they count (bug 20).
-const amounts = computed(() => calcolaFattura(filledLines.value, { ...settings.value, applicaRivalsaInps: applyRivalsa.value }))
+const amounts = computed(() => computeInvoice(filledLines.value, { ...settings.value, applicaRivalsaInps: applyRivalsa.value }))
 
 /** Error to show for the current step: a field error or a server error. */
 const stepError = computed(() => {
@@ -271,7 +271,7 @@ const issue = submitAs('issue')
                   {{ formatEuro(line.prezzoUnitario) }}
                 </td>
                 <td data-align="end">
-                  {{ formatEuro(totaleRiga(line)) }}
+                  {{ formatEuro(lineTotal(line)) }}
                 </td>
               </tr>
             </tbody>

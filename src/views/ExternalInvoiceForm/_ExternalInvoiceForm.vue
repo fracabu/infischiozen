@@ -14,8 +14,8 @@ import { useFattureStore } from '../../stores/fatture'
 import { useImpostazioniStore } from '../../stores/impostazioni'
 import { externalInvoiceSchema, externalStatuses, buildExternalInvoice } from '../../lib/externalInvoice'
 import { emptyLine } from '../../lib/invoiceDraft'
-import { calcolaFattura } from '../../lib/calcoloFattura'
-import { oggiISO } from '../../lib/format'
+import { computeInvoice } from '../../lib/invoiceMath'
+import { todayIso } from '../../lib/format'
 import { clientName } from '../../lib/displayNames'
 import { InvoiceLines } from '../../components/InvoiceLines'
 import { InvoiceTotals } from '../../components/InvoiceTotals'
@@ -36,7 +36,7 @@ const { defineField, handleSubmit, errors, isSubmitting, submitCount, setFieldVa
   validationSchema: toTypedSchema(externalInvoiceSchema),
   initialValues: {
     numero: '',
-    data: oggiISO(),
+    data: todayIso(),
     stato: 'pagata',
     clienteId: '',
     righe: [emptyLine()],
@@ -66,7 +66,7 @@ const settings = computed(() => settingsStore.dati || {})
 const client = computed(() => clientStore.lista.find((item) => String(item.id) === String(clientId.value)))
 const filledLines = computed(() => lines.value.filter((line) => line.descrizione))
 // Only lines with a description are saved, so only they count (bug 20).
-const amounts = computed(() => calcolaFattura(filledLines.value, { ...settings.value, applicaRivalsaInps: applyRivalsa.value }))
+const amounts = computed(() => computeInvoice(filledLines.value, { ...settings.value, applicaRivalsaInps: applyRivalsa.value }))
 const year = computed(() => String(date.value || '').slice(0, 4))
 const hasErrors = computed(() => submitCount.value > 0 && Object.keys(errors.value).length > 0)
 

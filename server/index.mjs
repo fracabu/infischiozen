@@ -13,7 +13,7 @@
 // ============================================================================
 import express from 'express'
 import { connetti, applicaSchema } from '../scripts/_db.mjs'
-import { IMPOSTAZIONI_DEFAULT } from '../src/data/impostazioniDefault.js'
+import { DEFAULT_SETTINGS } from '../src/data/defaultSettings.js'
 import {
   clienteVersoApp, clienteVersoDb,
   fatturaVersoApp, fatturaVersoDb,
@@ -449,7 +449,7 @@ app.get('/api/impostazioni', h(async (_req, res) => {
   const [r] = await sql`SELECT dati FROM impostazioni WHERE id = 1`
   // Al primo avvio la riga non c'e': si parte dai valori di default, con
   // `confermato: false`, e l'app porta l'utente a compilarli.
-  const dati = r?.dati || IMPOSTAZIONI_DEFAULT
+  const dati = r?.dati || DEFAULT_SETTINGS
   // Il prossimo numero si legge SEMPRE dal registro, mai da un contatore.
   res.json({ ...dati, prossimoNumeroFattura: await prossimoNumero() })
 }))

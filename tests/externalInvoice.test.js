@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { externalInvoiceSchema, buildExternalInvoice } from '../src/lib/externalInvoice.js'
 import { emptyLine } from '../src/lib/invoiceDraft.js'
-import { IMPOSTAZIONI_DEFAULT } from '../src/data/impostazioniDefault.js'
+import { DEFAULT_SETTINGS } from '../src/data/defaultSettings.js'
 
 // Invented test data (no real person or company).
 const client = { id: 3, tipo: 'azienda', ragioneSociale: 'Esempio Srl', partitaIVA: '12345678903' }
@@ -79,7 +79,7 @@ describe('externalInvoiceSchema', () => {
 
 describe('buildExternalInvoice', () => {
   it('bug 21: sends no year, so the server takes it from the date', () => {
-    const invoice = buildExternalInvoice(external(), client, IMPOSTAZIONI_DEFAULT)
+    const invoice = buildExternalInvoice(external(), client, DEFAULT_SETTINGS)
 
     expect(invoice).not.toHaveProperty('anno')
     expect(invoice).toMatchObject({ numero: 7, data: '2026-03-10', stato: 'pagata' })
@@ -87,7 +87,7 @@ describe('buildExternalInvoice', () => {
 
   it('bug 20: counts only the saved lines in the amounts', () => {
     const priced = { ...emptyLine(), prezzoUnitario: 99 }
-    const invoice = buildExternalInvoice(external({ righe: [...external().righe, priced] }), client, IMPOSTAZIONI_DEFAULT)
+    const invoice = buildExternalInvoice(external({ righe: [...external().righe, priced] }), client, DEFAULT_SETTINGS)
 
     expect(invoice.righe).toHaveLength(1)
     expect(invoice.imponibile).toBe(50)
@@ -95,7 +95,7 @@ describe('buildExternalInvoice', () => {
 
   it('has no due date and carries the attached PDF', () => {
     const pdf = new Blob(['%PDF'], { type: 'application/pdf' })
-    const invoice = buildExternalInvoice(external(), client, IMPOSTAZIONI_DEFAULT, pdf)
+    const invoice = buildExternalInvoice(external(), client, DEFAULT_SETTINGS, pdf)
 
     expect(invoice.scadenzaPagamento).toBe('')
     expect(invoice.pdfEsternoBlob).toBe(pdf)

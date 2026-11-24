@@ -8,7 +8,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatEuro } from '../../lib/format'
-import { totaleRiga } from '../../lib/calcoloFattura'
+import { lineTotal } from '../../lib/invoiceMath'
 import './_InvoiceLine.css'
 
 const props = defineProps({
@@ -22,7 +22,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update', 'remove'])
 const { t } = useI18n()
-const total = computed(() => totaleRiga(props.line))
+const total = computed(() => lineTotal(props.line))
 
 /**
  * Accessible name of a field of this line.

@@ -9,9 +9,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useFattureStore } from '../../stores/fatture'
 import { useImpostazioniStore } from '../../stores/impostazioni'
-import { formatEuro, formatData } from '../../lib/format'
-import { generaPdf } from '../../lib/generaPdf'
-import { generaXml, validaCampiXml, nomeFileXml } from '../../lib/generaXml'
+import { formatEuro, formatDate } from '../../lib/format'
+import { downloadInvoicePdf } from '../../lib/invoicePdf'
+import { buildInvoiceXml, checkXmlFields, xmlFileName } from '../../lib/invoiceXml'
 import { clientName, invoiceNumber } from '../../lib/displayNames'
 import { nextStatuses } from '../../lib/invoiceStatus'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
@@ -76,7 +76,7 @@ async function downloadPdf() {
   message.value = ''
 
   try {
-    await generaPdf(invoice.value, settings.value)
+    await downloadInvoicePdf(invoice.value, settings.value)
   } catch (error) {
     message.value = t('invoiceDetail.pdfError', { message: error instanceof Error ? error.message : String(error) })
   }
@@ -88,13 +88,13 @@ async function downloadPdf() {
  */
 async function downloadXml() {
   message.value = ''
-  xmlErrors.value = validaCampiXml(invoice.value, settings.value)
+  xmlErrors.value = checkXmlFields(invoice.value, settings.value)
 
   if (xmlErrors.value.length > 0) {
     return
   }
 
-  const xml = generaXml(invoice.value, settings.value)
+  const xml = buildInvoiceXml(invoice.value, settings.value)
 
   try {
     if (!invoice.value.xmlString) {
@@ -102,7 +102,7 @@ async function downloadXml() {
       invoice.value.xmlString = xml
     }
 
-    saveFile(new Blob([xml], { type: 'application/xml' }), nomeFileXml(invoice.value, settings.value))
+    saveFile(new Blob([xml], { type: 'application/xml' }), xmlFileName(invoice.value, settings.value))
   } catch (error) {
     showError(error)
   }
@@ -273,12 +273,12 @@ async function deleteDraft() {
         <dl data-part="facts">
           <dt>{{ t('invoiceDetail.date') }}</dt>
           <dd>
-            <time :datetime="invoice.data">{{ formatData(invoice.data) }}</time>
+            <time :datetime="invoice.data">{{ formatDate(invoice.data) }}</time>
           </dd>
           <dt>{{ t('invoiceDetail.payment') }}</dt>
           <dd>{{ invoice.modalitaPagamento || t('common.empty') }}</dd>
           <dt>{{ t('invoiceDetail.dueDate') }}</dt>
-          <dd>{{ invoice.scadenzaPagamento ? formatData(invoice.scadenzaPagamento) : t('common.empty') }}</dd>
+          <dd>{{ invoice.scadenzaPagamento ? formatDate(invoice.scadenzaPagamento) : t('common.empty') }}</dd>
         </dl>
       </section>
     </section>

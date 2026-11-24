@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { settingsSchema, LEGAL_TEXT_MAX } from '../src/lib/settingsSchema.js'
-import { IMPOSTAZIONI_DEFAULT } from '../src/data/impostazioniDefault.js'
+import { DEFAULT_SETTINGS } from '../src/data/defaultSettings.js'
 
 const valid = {
-  ...IMPOSTAZIONI_DEFAULT,
+  ...DEFAULT_SETTINGS,
   nome: 'Mario',
   cognome: 'Rossi',
   partitaIVA: '01234567897',
@@ -35,7 +35,7 @@ describe('settingsSchema', () => {
   })
 
   it('requires the identity and the address', () => {
-    const errors = errorsOf(IMPOSTAZIONI_DEFAULT)
+    const errors = errorsOf(DEFAULT_SETTINGS)
 
     expect(errors.nome).toBe('settingsForm.error.required')
     expect(errors.cognome).toBe('settingsForm.error.required')

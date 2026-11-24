@@ -5,7 +5,7 @@
  * translates it.
  */
 import { z } from 'zod'
-import { validaPartitaIVA, validaCodiceFiscale, validaCap, validaProvincia, validaEmail } from './format.js'
+import { isValidVatNumber, isValidTaxCode, isValidPostalCode, isValidProvince, isValidEmail } from './format.js'
 
 /**
  * FatturaPA accepts at most 100 characters in RiferimentoNormativo. A longer
@@ -91,27 +91,27 @@ export const settingsSchema = z
       }
     }
 
-    if (!validaPartitaIVA(settings.partitaIVA)) {
+    if (!isValidVatNumber(settings.partitaIVA)) {
       fail(context, 'partitaIVA', 'vatNumber')
     }
 
-    if (!validaCodiceFiscale(settings.codiceFiscale)) {
+    if (!isValidTaxCode(settings.codiceFiscale)) {
       fail(context, 'codiceFiscale', 'taxCode')
     }
 
-    if (!validaCap(settings.cap)) {
+    if (!isValidPostalCode(settings.cap)) {
       fail(context, 'cap', 'postalCode')
     }
 
-    if (!validaProvincia(settings.provincia)) {
+    if (!isValidProvince(settings.provincia)) {
       fail(context, 'provincia', 'province')
     }
 
-    if (settings.email && !validaEmail(settings.email)) {
+    if (settings.email && !isValidEmail(settings.email)) {
       fail(context, 'email', 'email')
     }
 
-    if (settings.pec && !validaEmail(settings.pec)) {
+    if (settings.pec && !isValidEmail(settings.pec)) {
       fail(context, 'pec', 'pec')
     }
 

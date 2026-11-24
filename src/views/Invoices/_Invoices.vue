@@ -6,7 +6,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useFattureStore } from '../../stores/fatture'
-import { formatEuro, formatData } from '../../lib/format'
+import { formatEuro, formatDate } from '../../lib/format'
 import { clientName, invoiceNumber } from '../../lib/displayNames'
 import { invoiceStatuses } from '../../lib/invoiceStatus'
 import './_Invoices.css'
@@ -111,7 +111,7 @@ function openInvoice(invoice) {
               </router-link>
             </th>
             <td>
-              <time :datetime="invoice.data">{{ formatData(invoice.data) }}</time>
+              <time :datetime="invoice.data">{{ formatDate(invoice.data) }}</time>
             </td>
             <td>{{ clientName(invoice.clienteSnapshot) || t('common.empty') }}</td>
             <td data-align="end">

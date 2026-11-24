@@ -4,7 +4,7 @@
  * Each error message is an i18n key under invoiceForm.error.
  */
 import { z } from 'zod'
-import { calcolaFattura, totaleRiga } from './calcoloFattura.js'
+import { computeInvoice, lineTotal } from './invoiceMath.js'
 
 /**
  * Text field: a missing value reads as empty text.
@@ -40,7 +40,7 @@ export const invoiceDraftSchema = z.object({
 })
 
 /**
- * The invoice the wizard saves or issues. Amounts come from calcolaFattura,
+ * The invoice the wizard saves or issues. Amounts come from computeInvoice,
  * with the rivalsa choice of this invoice in place of the settings default.
  *
  * @param {object} values - wizard values (see invoiceDraftSchema)
@@ -58,10 +58,10 @@ export function buildInvoice(values, client, settings) {
       descrizione: line.descrizione,
       quantita: Number(line.quantita) || 0,
       prezzoUnitario: Number(line.prezzoUnitario) || 0,
-      totaleRiga: totaleRiga(line),
+      totaleRiga: lineTotal(line),
     }))
 
-  const amounts = calcolaFattura(lines, config)
+  const amounts = computeInvoice(lines, config)
 
   return {
     data: values.data,

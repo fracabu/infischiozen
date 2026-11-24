@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { invoiceDraftSchema, emptyLine, buildInvoice } from '../src/lib/invoiceDraft.js'
-import { calcolaFattura } from '../src/lib/calcoloFattura.js'
-import { IMPOSTAZIONI_DEFAULT } from '../src/data/impostazioniDefault.js'
+import { computeInvoice } from '../src/lib/invoiceMath.js'
+import { DEFAULT_SETTINGS } from '../src/data/defaultSettings.js'
 
 // Invented test data (no real person or company).
 const client = { id: 3, tipo: 'privato', nome: 'Mario', cognome: 'Rossi', codiceFiscale: 'RSSMRA80A01H501U' }
@@ -64,7 +64,7 @@ describe('invoiceDraftSchema', () => {
 describe('buildInvoice', () => {
   it('keeps only lines with a description and adds the line total', () => {
     const values = draft({ righe: [...draft().righe, emptyLine()] })
-    const invoice = buildInvoice(values, client, IMPOSTAZIONI_DEFAULT)
+    const invoice = buildInvoice(values, client, DEFAULT_SETTINGS)
 
     expect(invoice.righe).toEqual([
       { prodottoId: undefined, descrizione: 'Consulenza', quantita: 2, prezzoUnitario: 50, totaleRiga: 100 },
@@ -73,24 +73,24 @@ describe('buildInvoice', () => {
 
   it('bug 20: a line with a price but no description does not count in the amounts', () => {
     const noDescription = { ...emptyLine(), prezzoUnitario: 30 }
-    const invoice = buildInvoice(draft({ righe: [...draft().righe, noDescription] }), client, IMPOSTAZIONI_DEFAULT)
+    const invoice = buildInvoice(draft({ righe: [...draft().righe, noDescription] }), client, DEFAULT_SETTINGS)
     const lineSum = invoice.righe.reduce((sum, line) => sum + line.totaleRiga, 0)
 
     expect(invoice.imponibile).toBe(lineSum)
   })
 
   it('copies the client id and a snapshot of the client', () => {
-    const invoice = buildInvoice(draft(), client, IMPOSTAZIONI_DEFAULT)
+    const invoice = buildInvoice(draft(), client, DEFAULT_SETTINGS)
 
     expect(invoice.clienteId).toBe(3)
     expect(invoice.clienteSnapshot).toEqual(client)
     expect(invoice.clienteSnapshot).not.toBe(client)
   })
 
-  it('takes the amounts from calcolaFattura with the rivalsa choice of this invoice', () => {
-    const withRivalsa = buildInvoice(draft(), client, IMPOSTAZIONI_DEFAULT)
-    const without = buildInvoice(draft({ applicaRivalsa: false }), client, IMPOSTAZIONI_DEFAULT)
-    const expected = calcolaFattura(draft().righe, { ...IMPOSTAZIONI_DEFAULT, applicaRivalsaInps: true })
+  it('takes the amounts from computeInvoice with the rivalsa choice of this invoice', () => {
+    const withRivalsa = buildInvoice(draft(), client, DEFAULT_SETTINGS)
+    const without = buildInvoice(draft({ applicaRivalsa: false }), client, DEFAULT_SETTINGS)
+    const expected = computeInvoice(draft().righe, { ...DEFAULT_SETTINGS, applicaRivalsaInps: true })
 
     expect(withRivalsa).toMatchObject({
       imponibile: expected.imponibile,
@@ -100,11 +100,11 @@ describe('buildInvoice', () => {
     })
 
     expect(without.rivalsaInps).toBe(0)
-    expect(without.totale).toBe(calcolaFattura(draft().righe, { ...IMPOSTAZIONI_DEFAULT, applicaRivalsaInps: false }).totale)
+    expect(without.totale).toBe(computeInvoice(draft().righe, { ...DEFAULT_SETTINGS, applicaRivalsaInps: false }).totale)
   })
 
   it('stores the rivalsa percentage only when the rivalsa applies', () => {
-    const settings = { ...IMPOSTAZIONI_DEFAULT, percentualeRivalsaInps: 4 }
+    const settings = { ...DEFAULT_SETTINGS, percentualeRivalsaInps: 4 }
 
     expect(buildInvoice(draft(), client, settings)).toMatchObject({ applicaRivalsaInps: true, percentualeRivalsa: 4 })
 
@@ -118,7 +118,7 @@ describe('buildInvoice', () => {
     const invoice = buildInvoice(
       draft({ modalitaPagamento: 'PayPal', scadenzaPagamento: '2026-12-20', note: 'Grazie' }),
       client,
-      IMPOSTAZIONI_DEFAULT,
+      DEFAULT_SETTINGS,
     )
 
     expect(invoice).toMatchObject({

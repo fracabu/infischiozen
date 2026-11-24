@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useClientiStore } from '../../stores/clienti'
 import { useFattureStore } from '../../stores/fatture'
-import { formatEuro, formatData } from '../../lib/format'
+import { formatEuro, formatDate } from '../../lib/format'
 import { clientName, invoiceNumber } from '../../lib/displayNames'
 import {
   countedInvoices,
@@ -220,7 +220,7 @@ const areaPoints = computed(() => `0,100 ${linePoints.value} 100,100`)
               </router-link>
             </th>
             <td>
-              <time :datetime="invoice.data">{{ formatData(invoice.data) }}</time>
+              <time :datetime="invoice.data">{{ formatDate(invoice.data) }}</time>
             </td>
             <td>{{ clientName(invoice.clienteSnapshot) || t('common.empty') }}</td>
             <td data-align="end">

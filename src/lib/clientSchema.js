@@ -5,8 +5,8 @@
  */
 import { z } from 'zod'
 import {
-  validaPartitaIVA, validaCodiceFiscale, validaCap,
-  validaProvincia, validaEmail, validaCodiceDestinatario,
+  isValidVatNumber, isValidTaxCode, isValidPostalCode,
+  isValidProvince, isValidEmail, isValidRecipientCode,
 } from './format.js'
 
 /**
@@ -92,7 +92,7 @@ export const clientSchema = z
 
       if (!client.codiceFiscale) {
         fail(context, 'codiceFiscale', 'required')
-      } else if (isItalian && !validaCodiceFiscale(client.codiceFiscale)) {
+      } else if (isItalian && !isValidTaxCode(client.codiceFiscale)) {
         fail(context, 'codiceFiscale', 'taxCode')
       }
     } else {
@@ -102,11 +102,11 @@ export const clientSchema = z
 
       if (!client.partitaIVA) {
         fail(context, 'partitaIVA', 'required')
-      } else if (isItalian && !validaPartitaIVA(client.partitaIVA)) {
+      } else if (isItalian && !isValidVatNumber(client.partitaIVA)) {
         fail(context, 'partitaIVA', 'vatNumber')
       }
 
-      if (isItalian && client.codiceFiscale && !validaCodiceFiscale(client.codiceFiscale)) {
+      if (isItalian && client.codiceFiscale && !isValidTaxCode(client.codiceFiscale)) {
         fail(context, 'codiceFiscale', 'taxCode')
       }
     }
@@ -119,23 +119,23 @@ export const clientSchema = z
       fail(context, 'citta', 'required')
     }
 
-    if (isItalian && !validaCap(client.cap)) {
+    if (isItalian && !isValidPostalCode(client.cap)) {
       fail(context, 'cap', 'postalCode')
     }
 
-    if (isItalian && !validaProvincia(client.provincia)) {
+    if (isItalian && !isValidProvince(client.provincia)) {
       fail(context, 'provincia', 'province')
     }
 
-    if (!validaCodiceDestinatario(client.codiceDestinatario)) {
+    if (!isValidRecipientCode(client.codiceDestinatario)) {
       fail(context, 'codiceDestinatario', 'recipientCode')
     }
 
-    if (client.pec && !validaEmail(client.pec)) {
+    if (client.pec && !isValidEmail(client.pec)) {
       fail(context, 'pec', 'pec')
     }
 
-    if (client.email && !validaEmail(client.email)) {
+    if (client.email && !isValidEmail(client.email)) {
       fail(context, 'email', 'email')
     }
   })

@@ -28,6 +28,7 @@ computer e i dati restano lì: **nessun account, nessun cloud**.
 - [Inviare la fattura all'Agenzia delle Entrate](#inviare-la-fattura-allagenzia-delle-entrate)
 - [API locale](#api-locale)
 - [Struttura del progetto](#struttura-del-progetto)
+- [Regole del codice (rule-mcp)](#regole-del-codice-rule-mcp)
 - [Stato del progetto](#stato-del-progetto)
 - [Roadmap](#roadmap)
 - [Contribuire](#contribuire)
@@ -182,24 +183,53 @@ scripts/applica_schema.mjs
 server/index.mjs        API Express, in ascolto solo su 127.0.0.1
 server/mappa.mjs        traduzione fra righe del DB e oggetti dell'app
 src/
-  views/                pagine (Dashboard, Clienti, Fatture, Impostazioni…)
+  views/                pagine; quelle già migrate hanno una cartella
+                        (Clients/, ClientForm/: index.js, _Nome.vue, _Nome.css)
   components/           componenti riusabili
   stores/               stato Pinia (clienti, fatture, prodotti, impostazioni)
+  locales/it.json       tutti i testi dell'interfaccia (vue-i18n)
   lib/
     calcoloFattura.js   imponibile, rivalsa, bollo, totale
     generaXml.js        XML FatturaPA 1.2 (FPR12)
     generaPdf.js        PDF di cortesia
+    clientSchema.js     regole di validazione della scheda cliente (zod)
   data/impostazioniDefault.js
 tests/                  test Vitest delle funzioni pure (calcolo, XML, validazioni)
+docs/adr/               decisioni di architettura (ADR)
+eslint.config.mjs       regole di stile del codice
 ```
 
-**Stack:** Vue 3 · Vite · Pinia · Vue Router · Express 5 · Postgres
-(PGlite, oppure `@neondatabase/serverless`) · pdfmake · Heroicons.
+**Stack:** Vue 3 · Vite · Pinia · Vue Router · vue-i18n · vee-validate + zod ·
+Express 5 · Postgres (PGlite, oppure `@neondatabase/serverless`) · pdfmake ·
+Heroicons · Vitest · ESLint.
+
+## Regole del codice (rule-mcp)
+
+Il progetto segue le regole di [rule-mcp](https://github.com/pixu1980/rule-mcp),
+un server MCP che dà a un agente AI regole e controlli per scrivere il codice.
+La scelta è nell'[ADR 001](docs/adr/001-adopt-rule-mcp-rules-enforced-with-eslint-and-rule-tool-check.md).
+Le regole principali:
+
+- **niente classi CSS e niente stili inline**: i selettori usano elementi e
+  attributi `data-part`; ogni componente ha il suo file `.css`;
+- **HTML semantico** al posto dei `<div>` generici;
+- **testi dell'interfaccia in `src/locales/it.json`**, non nei componenti
+  ([ADR 002](docs/adr/002-use-vue-i18n-for-ui-text.md));
+- **codice, commenti e nomi dei file in inglese**; l'utente vede l'italiano;
+- **form validati con vee-validate + zod**, con le regole in funzioni pure
+  sotto `src/lib/` e i loro test;
+- **ogni decisione di architettura in un'ADR** in `docs/adr/`.
+
+La migrazione va **una schermata per volta** ed è in corso: le schermate non
+ancora migrate usano ancora `src/assets/main.css` e nomi in italiano.
+rule-mcp serve solo a chi sviluppa con un agente AI. Per usare l'app o
+contribuire a mano non serve installarlo. ESLint (`npm run lint`) controlla lo
+stile del JavaScript. Per CSS e HTML il modello sono le schermate già migrate.
 
 ## Stato del progetto
 
 Il codice nasce da un gestionale personale reso generico. In
-[REVIEW.md](REVIEW.md) c'è la revisione completa: 17 bug corretti e i problemi
+[REVIEW.md](REVIEW.md) c'è la revisione completa: 19 bug corretti e i problemi
 noti ancora aperti. In breve:
 
 - ✅ build di produzione provata;

@@ -47,9 +47,24 @@ codice.
 
 ## Come è scritto il codice
 
-- **Nomi e commenti in italiano** (`calcolaFattura`, `clienteVersoDb`,
-  `ErroreHttp`). Il dominio è fiscale italiano: tradurre "marca da bollo" o
-  "rivalsa" in inglese renderebbe il codice più difficile da controllare.
+Il progetto segue le regole di [rule-mcp](https://github.com/pixu1980/rule-mcp)
+([ADR 001](docs/adr/001-adopt-rule-mcp-rules-enforced-with-eslint-and-rule-tool-check.md)).
+La migrazione va una schermata per volta: il codice vecchio ha ancora nomi
+italiani e classi CSS. **Il codice nuovo segue le regole nuove.** Come modello,
+guarda `src/views/Clients/` e `src/views/ClientForm/`.
+
+- **Codice, commenti e nomi dei file in inglese.** I campi dei dati
+  (`codiceFiscale`, `partitaIVA`) restano in italiano finché store e server
+  non cambiano nome.
+- **Testi dell'interfaccia in `src/locales/it.json`**, letti con `t()` di
+  vue-i18n ([ADR 002](docs/adr/002-use-vue-i18n-for-ui-text.md)).
+- **Un componente è una cartella**: `index.js` che esporta, `_Nome.vue` e
+  `_Nome.css`. Niente classi CSS né stili inline: selettori su elementi e
+  `data-part`. Niente `<div>` dove esiste un elemento semantico.
+- **Form con vee-validate + zod.** Lo schema è una funzione pura in `src/lib/`
+  (vedi `clientSchema.js`) con i suoi test.
+- **`npm run lint` deve passare** sui file che tocchi.
+- **Una decisione di architettura va in un'ADR** in `docs/adr/`.
 - **I commenti spiegano il perché**, non il cosa. Quando una regola viene da una
   norma o da un vincolo FatturaPA, scrivilo (vedi `calcoloFattura.js` e
   `generaXml.js`).

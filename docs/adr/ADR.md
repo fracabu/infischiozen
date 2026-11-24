@@ -8,6 +8,7 @@ this directory are the source of truth; this index is generated from them by
 
 | #                                                                                              | Title                                                                                           | Date       | Status   | Tags                            |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------- | -------- | ------------------------------- |
+| [006](006-use-undefined-instead-of-null-in-code-and-omit-missing-keys-from-api-json.md)        | Use undefined instead of null in code, and omit missing keys from API JSON                      | 2026-11-24 | accepted | api, lint, database             |
 | [005](005-test-the-browser-on-a-build-and-the-api-in-a-child-process-each-on-a-temporary-p.md) | Test the browser on a build and the API in a child process, each on a temporary PGlite database | 2026-11-24 | accepted | testing, playwright, a11y, api  |
 | [004](004-rename-code-to-english-keep-the-italian-data-contract.md)                            | Rename code to English, keep the Italian data contract                                          | 2026-11-24 | accepted | naming, api, database, refactor |
 | [003](003-use-pglite-as-the-default-local-database.md)                                         | Use PGlite as the default local database                                                        | 2026-11-23 | accepted | database, infra                 |
@@ -21,6 +22,7 @@ file. Where a line stops short the rest is in the ADR.
 
 | ADR                                                                                            | Decision                                                                                                                                                                                                                  | Consequence                                                                                                                                                                                                                  |
 | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [006](006-use-undefined-instead-of-null-in-code-and-omit-missing-keys-from-api-json.md)        | Write undefined, never the null literal.                                                                                                                                                                                  | Positive: one empty value in code, and the lint passes with the full unicorn preset.                                                                                                                                         |
 | [005](005-test-the-browser-on-a-build-and-the-api-in-a-child-process-each-on-a-temporary-p.md) | Browser tests use Playwright (@playwright/test 1.65.1 and @axe-core/playwright 4.14.0, exact pins).                                                                                                                       | Positive: tests never touch the real local data or Neon.                                                                                                                                                                     |
 | [004](004-rename-code-to-english-keep-the-italian-data-contract.md)                            | The owner chose to rename only code: file names, exports, identifiers, comments and test titles in src/lib, src/stores, src/data, server, scripts and tests (for example invoiceMath.js, invoiceXml.js, invoicePdf.js,... | No data migration, the owner's env file keeps working, the API contract is unchanged.                                                                                                                                        |
 | [003](003-use-pglite-as-the-default-local-database.md)                                         | PGlite (Postgres in the Node process) stores data in a local data folder, excluded from git; an environment variable can move it.                                                                                         | npm install and npm run dev work with no setup.                                                                                                                                                                              |
@@ -31,6 +33,18 @@ file. Where a line stops short the rest is in the ADR.
 
 Tags carried by 3 or more decisions. A decision appears under every
 theme it carries, and the early ADRs that predate the tag field are listed last.
+
+### api
+
+- [006](006-use-undefined-instead-of-null-in-code-and-omit-missing-keys-from-api-json.md) Use undefined instead of null in code, and omit missing keys from API JSON
+- [005](005-test-the-browser-on-a-build-and-the-api-in-a-child-process-each-on-a-temporary-p.md) Test the browser on a build and the API in a child process, each on a temporary PGlite database
+- [004](004-rename-code-to-english-keep-the-italian-data-contract.md) Rename code to English, keep the Italian data contract
+
+### database
+
+- [006](006-use-undefined-instead-of-null-in-code-and-omit-missing-keys-from-api-json.md) Use undefined instead of null in code, and omit missing keys from API JSON
+- [004](004-rename-code-to-english-keep-the-italian-data-contract.md) Rename code to English, keep the Italian data contract
+- [003](003-use-pglite-as-the-default-local-database.md) Use PGlite as the default local database
 
 ## Operating rules
 

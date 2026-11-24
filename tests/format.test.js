@@ -13,7 +13,7 @@ describe('isValidVatNumber', () => {
   it('rejects a wrong check digit', () => expect(isValidVatNumber('12345678901')).toBe(false))
 
   it('rejects a wrong length or wrong characters', () => {
-    for (const value of ['', null, '1234567890', '123456789031', '1234567890A']) {
+    for (const value of ['', undefined, '1234567890', '123456789031', '1234567890A']) {
       expect(isValidVatNumber(value)).toBe(false)
     }
   })
@@ -32,7 +32,7 @@ describe('isValidTaxCode', () => {
   it('accepts the numeric tax code of a company (= VAT number)', () => expect(isValidTaxCode(VALID_VAT)).toBe(true))
 
   it('rejects wrong formats', () => {
-    for (const value of ['', null, 'RSSMRA80A01H501', 'RSSMRA80A01H501U1', 'RSSMRA80A01H50-U']) {
+    for (const value of ['', undefined, 'RSSMRA80A01H501', 'RSSMRA80A01H501U1', 'RSSMRA80A01H50-U']) {
       expect(isValidTaxCode(value)).toBe(false)
     }
   })

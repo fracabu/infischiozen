@@ -29,7 +29,7 @@ export const useProductsStore = defineStore('products', () => {
       await load()
     }
 
-    return list.value.find((product) => product.id === productId) || null
+    return list.value.find((product) => product.id === productId)
   }
 
   async function save(product) {

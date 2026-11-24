@@ -73,7 +73,7 @@ describe('stamp duty', () => {
 describe('edge cases', () => {
   it('no lines give all zeros', () => {
     expect(computeInvoice([], base)).toEqual({ imponibile: 0, rivalsaInps: 0, marcaDaBollo: 0, totale: 0 })
-    expect(computeInvoice(null, base).totale).toBe(0)
+    expect(computeInvoice(undefined, base).totale).toBe(0)
   })
 
   it('values that are not numbers count as zero', () => {

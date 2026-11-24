@@ -24,7 +24,7 @@ const COMPANY = {
   codiceDestinatario: 'ABC1234',
 }
 
-function invoice(lines, client = PERSON, settings = SELLER) {
+function invoice(lines, { client = PERSON, settings = SELLER } = {}) {
   const amounts = computeInvoice(lines, settings)
 
   return {
@@ -36,7 +36,7 @@ function invoice(lines, client = PERSON, settings = SELLER) {
 }
 
 // All the values of one tag.
-const values = (xml, tag) => [...xml.matchAll(new RegExp(`<${tag}>([^<]*)</${tag}>`, 'g'))].map((m) => m[1])
+const values = (xml, tag) => xml.matchAll(new RegExp(`<${tag}>([^<]*)</${tag}>`, 'g')).map((m) => m[1]).toArray()
 const sum = (arr) => Math.round(arr.reduce((a, v) => a + Number(v), 0) * 100) / 100
 
 describe('invoiceXml', () => {
@@ -75,7 +75,7 @@ describe('invoiceXml', () => {
 
   it('stamp duty paid by the seller: DatiBollo yes, line no (bug #3)', () => {
     const settings = { ...SELLER, addebitaBolloAlCliente: false }
-    const xml = buildInvoiceXml(invoice([{ descrizione: 'B', quantita: 1, prezzoUnitario: 200 }], PERSON, settings), settings)
+    const xml = buildInvoiceXml(invoice([{ descrizione: 'B', quantita: 1, prezzoUnitario: 200 }], { settings }), settings)
     expect(xml).toContain('<DatiBollo>')
     expect(xml).not.toContain('Rimborso imposta di bollo')
   })
@@ -87,17 +87,17 @@ describe('invoiceXml', () => {
 
   it('a person with Nome/Cognome, a company with Denominazione and VAT number', () => {
     const lines = [{ descrizione: 'A', quantita: 1, prezzoUnitario: 50 }]
-    const xmlP = buildInvoiceXml(invoice(lines, PERSON), SELLER)
+    const xmlP = buildInvoiceXml(invoice(lines, { client: PERSON }), SELLER)
     expect(xmlP).toContain('<Nome>Anna</Nome>')
     expect(xmlP).toContain('<CodiceFiscale>BNCNNA90A41F205X</CodiceFiscale>')
 
-    const xmlA = buildInvoiceXml(invoice(lines, COMPANY), SELLER)
+    const xmlA = buildInvoiceXml(invoice(lines, { client: COMPANY }), SELLER)
     expect(xmlA).toContain('<CodiceDestinatario>ABC1234</CodiceDestinatario>')
     expect(xmlA).toMatch(/<CessionarioCommittente>[\s\S]*<IdCodice>12345678903<\/IdCodice>/)
   })
 
   it('escapes special characters', () => {
-    const xml = buildInvoiceXml(invoice([{ descrizione: 'Corso <base> & "avanzato"', quantita: 1, prezzoUnitario: 10 }], COMPANY), SELLER)
+    const xml = buildInvoiceXml(invoice([{ descrizione: 'Corso <base> & "avanzato"', quantita: 1, prezzoUnitario: 10 }], { client: COMPANY }), SELLER)
     expect(xml).toContain('Esempio &amp; Figli S.r.l.')
     expect(xml).toContain('Corso &lt;base&gt; &amp; &quot;avanzato&quot;')
   })
@@ -119,11 +119,11 @@ describe('checkXmlFields', () => {
   })
 
   it('a person with 0000000 and no PEC is valid (bug #2)', () => {
-    expect(checkXmlFields(invoice(lines, { ...PERSON, pec: '' }), SELLER)).toEqual([])
+    expect(checkXmlFields(invoice(lines, { client: { ...PERSON, pec: '' } }), SELLER)).toEqual([])
   })
 
   it('reports a draft with no number, an incomplete seller, a client with no tax code or VAT number', () => {
-    const draft = { ...invoice(lines, { ...PERSON, codiceFiscale: '' }), numero: null }
+    const draft = { ...invoice(lines, { client: { ...PERSON, codiceFiscale: '' } }), numero: undefined }
     const errors = checkXmlFields(draft, { ...SELLER, partitaIVA: '' })
     expect(errors).toHaveLength(3)
   })

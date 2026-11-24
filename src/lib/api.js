@@ -14,7 +14,7 @@ const BASE = '/api'
  * @param {string} method
  * @param {string} path - path under /api
  * @param {unknown} [body]
- * @returns {Promise<unknown>} the answer body, or null for 204
+ * @returns {Promise<unknown>} the answer body, or undefined for 204
  */
 async function request(method, path, body) {
   let response
@@ -48,7 +48,7 @@ async function request(method, path, body) {
   }
 
   if (response.status === 204) {
-    return null
+    return
   }
 
   return response.json()
@@ -70,11 +70,9 @@ export const api = {
   async getPdf(id) {
     const response = await fetch(`${BASE}/fatture/${id}/pdf`)
 
-    if (!response.ok) {
-      return null
+    if (response.ok) {
+      return response.blob()
     }
-
-    return response.blob()
   },
   async putPdf(id, blob) {
     const response = await fetch(`${BASE}/fatture/${id}/pdf`, {

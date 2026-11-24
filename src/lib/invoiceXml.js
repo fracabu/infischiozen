@@ -13,7 +13,10 @@ import { isStampDutyDue } from './invoiceMath.js'
  * @returns {string}
  */
 function escapeXml(value) {
-  return String(value == null ? '' : value)
+  // null and undefined become an empty element, never the text "null".
+  const text = value === null || value === undefined ? '' : String(value)
+
+  return text
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
@@ -147,7 +150,7 @@ export function buildInvoiceXml(invoice, settings) {
       lineNumber++
       const quantity = Number(line.quantita) || 0
       const unitPrice = Number(line.prezzoUnitario) || 0
-      const total = line.totaleRiga != null ? Number(line.totaleRiga) : round2(quantity * unitPrice)
+      const total = Number(line.totaleRiga ?? round2(quantity * unitPrice))
 
       return `      <DettaglioLinee>
         <NumeroLinea>${lineNumber}</NumeroLinea>
@@ -179,11 +182,11 @@ export function buildInvoiceXml(invoice, settings) {
   // Stamp duty charged to the client: it is a refund out of the tax base
   // (art. 15 DPR 633/72), so a separate line with Natura N1 and its own
   // summary. Without this line the document total does not match the lines.
-  const stampDutyCharged = Number(invoice.marcaDaBollo) > 0
+  const isStampDutyCharged = Number(invoice.marcaDaBollo) > 0
   let stampDutyLine = ''
   let stampDutySummary = ''
 
-  if (stampDutyCharged) {
+  if (isStampDutyCharged) {
     lineNumber++
 
     stampDutyLine = `\n      <DettaglioLinee>
@@ -210,10 +213,10 @@ export function buildInvoiceXml(invoice, settings) {
 
   // DatiBollo goes in each time the stamp duty is DUE, also when the seller
   // pays it: the tax agency uses it to compute the virtual stamp duty to pay.
-  const stampDutyData = stampDutyCharged || isStampDutyDue(invoice, seller)
+  const stampDutyData = isStampDutyCharged || isStampDutyDue(invoice, seller)
     ? `\n        <DatiBollo>
           <BolloVirtuale>SI</BolloVirtuale>
-          <ImportoBollo>${amount(stampDutyCharged ? invoice.marcaDaBollo : seller.importoBollo || 2)}</ImportoBollo>
+          <ImportoBollo>${amount(isStampDutyCharged ? invoice.marcaDaBollo : seller.importoBollo || 2)}</ImportoBollo>
         </DatiBollo>`
     : ''
 

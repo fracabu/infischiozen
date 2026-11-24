@@ -38,7 +38,9 @@ const app = express()
 app.use(express.json({ limit: '25mb' }))
 app.use('/api/fatture/:id/pdf', express.raw({ type: '*/*', limit: '25mb' }))
 
-/** Error with an exact HTTP status, to throw inside a handler. */
+/**
+ * Error with an exact HTTP status, to throw inside a handler.
+ */
 class HttpError extends Error {
   constructor(status, message) {
     super(message)
@@ -48,15 +50,32 @@ class HttpError extends Error {
 
 // Each async handler goes through here: without this wrapper a rejected
 // promise would leave the request hanging instead of answering.
-const handle = (fn) => (req, res) => fn(req, res).catch((error) => {
+const handle = (fn) => async (req, res) => {
+  try {
+    await fn(req, res)
+  } catch (error) {
+    answerError(req, res, error)
+  }
+}
+
+/**
+ * Answer a failed request with { errore: message } and the right status.
+ *
+ * @param {object} req - Express request
+ * @param {object} res - Express response
+ * @param {Error} error - the error the handler threw
+ */
+function answerError(req, res, error) {
   // 23505 = unique index violation. On invoices it means a number already in
   // use (two issues at the same time, or an external invoice with a number
   // that exists): a conflict to explain, not a server error.
   if (error.code === '23505') {
-    return res.status(409).json({
+    res.status(409).json({
       errore: 'Esiste gia\' un record con lo stesso numero o codice. ' +
               'Se stavi emettendo una fattura, riprova: il numero viene ricalcolato.',
     })
+
+    return
   }
 
   const status = error.status || 500
@@ -66,7 +85,7 @@ const handle = (fn) => (req, res) => fn(req, res).catch((error) => {
   }
 
   res.status(status).json({ errore: error.message })
-})
+}
 
 // Dates are read as text, never as Date: see the note in mapping.mjs.
 const INVOICE_FIELDS = `
@@ -79,17 +98,18 @@ const INVOICE_FIELDS = `
 
 const INVOICE_FIELDS_BARE = INVOICE_FIELDS.replaceAll('f.', '')
 
-const STATUSES = ['bozza', 'emessa', 'inviata', 'pagata', 'annullata']
-const NUMBERED_STATUSES = ['emessa', 'inviata', 'pagata']
+const STATUSES = new Set(['bozza', 'emessa', 'inviata', 'pagata', 'annullata'])
+const NUMBERED_STATUSES = new Set(['emessa', 'inviata', 'pagata'])
 
-const yearOf = (isoDate) => Number(String(isoDate || '').slice(0, 4)) || new Date().getFullYear()
+const yearOf = (isoDate = '') => Number(String(isoDate).slice(0, 4)) || new Date().getFullYear()
 
 // ---------------------------------------------------------------- diagnostics
 app.get('/api/stato', handle(async (_req, res) => {
   const [row] = await sql`
     SELECT (SELECT count(*)::int FROM fatture)         AS fatture,
            (SELECT count(*)::int FROM clienti_fiscali) AS clienti,
-           (SELECT count(*)::int FROM prodotti)        AS prodotti`
+           (SELECT count(*)::int FROM prodotti)        AS prodotti
+  `
 
   res.json({ ok: true, ...row })
 }))
@@ -97,7 +117,7 @@ app.get('/api/stato', handle(async (_req, res) => {
 // -------------------------------------------------------------------- clients
 app.get('/api/clienti', handle(async (_req, res) => {
   const rows = await sql`SELECT * FROM clienti_fiscali ORDER BY id DESC`
-  res.json(rows.map(clientToApp))
+  res.json(rows.map((row) => clientToApp(row)))
 }))
 
 app.get('/api/clienti/:id', handle(async (req, res) => {
@@ -151,7 +171,8 @@ app.delete('/api/clienti/:id', handle(async (req, res) => {
   // A client with invoices cannot be deleted: the fiscal document must stay
   // linked to whoever received it.
   const [{ n }] = await sql`
-    SELECT count(*)::int AS n FROM fatture WHERE cliente_id = ${+req.params.id}`
+    SELECT count(*)::int AS n FROM fatture WHERE cliente_id = ${+req.params.id}
+  `
 
   if (n > 0) {
     throw new HttpError(409, `Il cliente ha ${n} fatture e non puo' essere eliminato.`)
@@ -166,7 +187,7 @@ app.get('/api/fatture', handle(async (_req, res) => {
   const rows = await sql.query(`SELECT ${INVOICE_FIELDS} FROM fatture f
     ORDER BY f.anno DESC NULLS LAST, f.numero DESC NULLS FIRST, f.id DESC`)
 
-  res.json(rows.map(invoiceToApp))
+  res.json(rows.map((row) => invoiceToApp(row)))
 }))
 
 app.get('/api/fatture/:id', handle(async (req, res) => {
@@ -212,7 +233,8 @@ app.put('/api/fatture/:id/pdf', handle(async (req, res) => {
 async function checkDateOrder(year, date) {
   const [row] = await sql`
     SELECT max(data_emissione)::text AS ultima FROM fatture
-    WHERE anno = ${year} AND numero IS NOT NULL`
+    WHERE anno = ${year} AND numero IS NOT NULL
+  `
 
   if (row?.ultima && date < row.ultima) {
     throw new HttpError(409,
@@ -256,13 +278,13 @@ app.post('/api/fatture', handle(async (req, res) => {
   }
 
   const origin = req.body.origine === 'esterna' ? 'esterna' : 'interna'
-  const status = STATUSES.includes(req.body.stato) ? req.body.stato : 'bozza'
+  const status = STATUSES.has(req.body.stato) ? req.body.stato : 'bozza'
   const year = yearOf(invoice.data_emissione)
 
   if (origin === 'esterna') {
     const number = Number(req.body.numero)
 
-    if (!Number.isInteger(number) || number < 1) {
+    if (!Number.isSafeInteger(number) || number < 1) {
       throw new HttpError(400, 'Numero della fattura esterna non valido')
     }
 
@@ -361,7 +383,7 @@ app.patch('/api/fatture/:id/stato', handle(async (req, res) => {
   const id = +req.params.id
   const next = req.body.stato
 
-  if (!STATUSES.includes(next) || next === 'bozza') {
+  if (next === 'bozza' || !STATUSES.has(next)) {
     throw new HttpError(400, `Stato non valido: ${next}`)
   }
 
@@ -373,7 +395,7 @@ app.patch('/api/fatture/:id/stato', handle(async (req, res) => {
 
   // Without this check a draft could become "emessa" with no number: an
   // issued invoice that does not exist in the numbering.
-  if (current.numero === null && NUMBERED_STATUSES.includes(next)) {
+  if (current.numero === null && NUMBERED_STATUSES.has(next)) {
     throw new HttpError(409, 'Una bozza va emessa, non cambiata di stato: usa "Emetti".')
   }
 
@@ -406,7 +428,7 @@ app.delete('/api/fatture/:id', handle(async (req, res) => {
 // ------------------------------------------------------------------- products
 app.get('/api/prodotti', handle(async (_req, res) => {
   const rows = await sql`SELECT * FROM prodotti ORDER BY nome`
-  res.json(rows.map(productToApp))
+  res.json(rows.map((row) => productToApp(row)))
 }))
 
 app.post('/api/prodotti', handle(async (req, res) => {
@@ -414,9 +436,10 @@ app.post('/api/prodotti', handle(async (req, res) => {
 
   const [row] = await sql`
     INSERT INTO prodotti (nome, categoria, unita_misura, prezzo, descrizione, attivo)
-    VALUES (${product.nome}, ${product.categoria || null}, ${product.unitaMisura || null},
-            ${Number(product.prezzo) || 0}, ${product.descrizione || null}, ${product.attivo !== false})
-    RETURNING *`
+    VALUES (${product.nome}, ${product.categoria || undefined}, ${product.unitaMisura || undefined},
+            ${Number(product.prezzo) || 0}, ${product.descrizione || undefined}, ${product.attivo !== false})
+    RETURNING *
+  `
 
   res.status(201).json(productToApp(row))
 }))
@@ -425,11 +448,12 @@ app.put('/api/prodotti/:id', handle(async (req, res) => {
   const product = req.body
 
   const [row] = await sql`
-    UPDATE prodotti SET nome = ${product.nome}, categoria = ${product.categoria || null},
-      unita_misura = ${product.unitaMisura || null}, prezzo = ${Number(product.prezzo) || 0},
-      descrizione = ${product.descrizione || null}, attivo = ${product.attivo !== false},
+    UPDATE prodotti SET nome = ${product.nome}, categoria = ${product.categoria || undefined},
+      unita_misura = ${product.unitaMisura || undefined}, prezzo = ${Number(product.prezzo) || 0},
+      descrizione = ${product.descrizione || undefined}, attivo = ${product.attivo !== false},
       updated_at = now()
-    WHERE id = ${+req.params.id} RETURNING *`
+    WHERE id = ${+req.params.id} RETURNING *
+  `
 
   if (!row) {
     throw new HttpError(404, 'Prodotto non trovato')
@@ -450,7 +474,8 @@ app.delete('/api/prodotti/:id', handle(async (req, res) => {
 async function nextNumber() {
   const [{ prossimo }] = await sql`
     SELECT COALESCE(MAX(numero), 0) + 1 AS prossimo
-    FROM fatture WHERE anno = ${new Date().getFullYear()}`
+    FROM fatture WHERE anno = ${new Date().getFullYear()}
+  `
 
   return prossimo
 }
@@ -466,13 +491,14 @@ app.get('/api/impostazioni', handle(async (_req, res) => {
 
 app.put('/api/impostazioni', handle(async (req, res) => {
   // The next number is computed, not saved: it does not go into the JSON.
-  const { prossimoNumeroFattura, ...rest } = req.body
-  const settings = { ...rest, id: 1, confermato: true }
+  const settings = { ...req.body, id: 1, confermato: true }
+  delete settings.prossimoNumeroFattura
 
   const [row] = await sql`
     INSERT INTO impostazioni (id, dati) VALUES (1, ${JSON.stringify(settings)}::jsonb)
     ON CONFLICT (id) DO UPDATE SET dati = EXCLUDED.dati, updated_at = now()
-    RETURNING dati`
+    RETURNING dati
+  `
 
   res.json({ ...row.dati, prossimoNumeroFattura: await nextNumber() })
 }))

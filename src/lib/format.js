@@ -36,11 +36,7 @@ export function formatDate(iso) {
 
   const parts = String(iso).slice(0, 10).split('-')
 
-  if (parts.length !== 3) {
-    return iso
-  }
-
-  return `${parts[2]}/${parts[1]}/${parts[0]}`
+  return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : iso
 }
 
 /**
@@ -86,7 +82,7 @@ export function isValidVatNumber(vatNumber) {
   let sum = 0
 
   for (let i = 0; i < 11; i++) {
-    let digit = parseInt(value[i], 10)
+    let digit = Number(value[i])
 
     if (i % 2 === 1) {
       digit *= 2
@@ -159,8 +155,8 @@ export function isValidTaxCode(taxCode) {
  * @param {string|number|null|undefined} postalCode
  * @returns {boolean}
  */
-export function isValidPostalCode(postalCode) {
-  return /^\d{5}$/.test(String(postalCode || '').trim())
+export function isValidPostalCode(postalCode = '') {
+  return /^\d{5}$/.test(String(postalCode).trim())
 }
 
 /**
@@ -169,8 +165,8 @@ export function isValidPostalCode(postalCode) {
  * @param {string|number|null|undefined} province
  * @returns {boolean}
  */
-export function isValidProvince(province) {
-  return /^[A-Z]{2}$/.test(String(province || '').trim().toUpperCase())
+export function isValidProvince(province = '') {
+  return /^[A-Z]{2}$/.test(String(province).trim().toUpperCase())
 }
 
 /**
@@ -179,8 +175,8 @@ export function isValidProvince(province) {
  * @param {string|number|null|undefined} recipientCode
  * @returns {boolean}
  */
-export function isValidRecipientCode(recipientCode) {
-  return /^[A-Z0-9]{7}$/.test(String(recipientCode || '').trim().toUpperCase())
+export function isValidRecipientCode(recipientCode = '') {
+  return /^[A-Z0-9]{7}$/.test(String(recipientCode).trim().toUpperCase())
 }
 
 /**
@@ -189,6 +185,6 @@ export function isValidRecipientCode(recipientCode) {
  * @param {string|number|null|undefined} email
  * @returns {boolean}
  */
-export function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim())
+export function isValidEmail(email = '') {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim())
 }

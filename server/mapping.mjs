@@ -19,17 +19,17 @@
 
 /**
  * @param {unknown} value
- * @returns {number|null} the value as a number, null when it is missing
+ * @returns {number|undefined} the value as a number, undefined when it is missing
  */
-const toNumber = (value) => (value === null || value === undefined ? null : Number(value))
+const toNumber = (value) => (value === null || value === undefined ? undefined : Number(value))
 
 /**
  * @param {object} row - clienti_fiscali row
- * @returns {object|null} client record for the app
+ * @returns {object|undefined} client record for the app
  */
 export function clientToApp(row) {
   if (!row) {
-    return null
+    return
   }
 
   return {
@@ -67,32 +67,32 @@ export function clientToDb(client) {
 
   return {
     tipo: client.tipo || 'privato',
-    nome: client.nome || null,
-    cognome: client.cognome || null,
-    denominazione: client.ragioneSociale || null,
+    nome: client.nome || undefined,
+    cognome: client.cognome || undefined,
+    denominazione: client.ragioneSociale || undefined,
     nome_completo: fullName,
-    codice_fiscale: client.codiceFiscale || null,
-    partita_iva: client.partitaIVA || null,
-    email: client.email || null,
-    indirizzo: client.indirizzo || null,
-    cap: client.cap || null,
-    citta: client.citta || null,
-    provincia: client.provincia || null,
+    codice_fiscale: client.codiceFiscale || undefined,
+    partita_iva: client.partitaIVA || undefined,
+    email: client.email || undefined,
+    indirizzo: client.indirizzo || undefined,
+    cap: client.cap || undefined,
+    citta: client.citta || undefined,
+    provincia: client.provincia || undefined,
     nazione: client.nazione || 'IT',
     codice_destinatario: client.codiceDestinatario || '0000000',
-    pec: client.pec || null,
-    telefono: client.telefono || null,
-    note: client.note || null,
+    pec: client.pec || undefined,
+    telefono: client.telefono || undefined,
+    note: client.note || undefined,
   }
 }
 
 /**
  * @param {object} row - fatture row
- * @returns {object|null} invoice record for the app
+ * @returns {object|undefined} invoice record for the app
  */
 export function invoiceToApp(row) {
   if (!row) {
-    return null
+    return
   }
 
   return {
@@ -105,7 +105,7 @@ export function invoiceToApp(row) {
     clienteId: row.cliente_id,
     clienteSnapshot: row.cliente_snapshot || {},
     righe: (row.righe || []).map((line) => ({
-      prodottoId: line.prodottoId ?? line.prodotto_id ?? null,
+      prodottoId: line.prodottoId ?? line.prodotto_id,
       descrizione: line.descrizione || '',
       quantita: toNumber(line.quantita) ?? 1,
       prezzoUnitario: toNumber(line.prezzoUnitario ?? line.prezzo_unitario) ?? 0,
@@ -139,7 +139,7 @@ export function invoiceToApp(row) {
  */
 export function invoiceToDb(invoice) {
   const lines = (invoice.righe || []).map((line) => ({
-    prodottoId: line.prodottoId ?? null,
+    prodottoId: line.prodottoId,
     descrizione: line.descrizione || '',
     quantita: Number.isFinite(Number(line.quantita)) ? Number(line.quantita) : 1,
     prezzoUnitario: Number(line.prezzoUnitario) || 0,
@@ -147,8 +147,8 @@ export function invoiceToDb(invoice) {
   }))
 
   return {
-    data_emissione: invoice.data || null,
-    cliente_id: invoice.clienteId ?? null,
+    data_emissione: invoice.data || undefined,
+    cliente_id: invoice.clienteId,
     cliente_snapshot: invoice.clienteSnapshot || {},
     righe: lines,
     imponibile: Number(invoice.imponibile) || 0,
@@ -158,20 +158,20 @@ export function invoiceToDb(invoice) {
     marca_da_bollo: Number(invoice.marcaDaBollo) || 0,
     totale: Number(invoice.totale) || 0,
     stato: invoice.stato || 'bozza',
-    note: invoice.note || null,
-    modalita_pagamento: invoice.modalitaPagamento || null,
-    scadenza_pagamento: invoice.scadenzaPagamento || null,
-    xml_sdi: invoice.xmlString || null,
+    note: invoice.note || undefined,
+    modalita_pagamento: invoice.modalitaPagamento || undefined,
+    scadenza_pagamento: invoice.scadenzaPagamento || undefined,
+    xml_sdi: invoice.xmlString || undefined,
   }
 }
 
 /**
  * @param {object} row - prodotti row
- * @returns {object|null} product record for the app
+ * @returns {object|undefined} product record for the app
  */
 export function productToApp(row) {
   if (!row) {
-    return null
+    return
   }
 
   return {

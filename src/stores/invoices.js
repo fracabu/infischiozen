@@ -7,6 +7,35 @@ import { ref } from 'vue'
 import { api } from '../lib/api'
 
 /**
+ * Read one invoice from the API, with its attached PDF when it has one.
+ *
+ * @param {number|string} id
+ * @returns {Promise<object>} the invoice record
+ */
+async function getInvoice(id) {
+  const invoice = await api.get(`/fatture/${Number(id)}`)
+
+  // The PDF binary is not in the JSON: download it only when it exists.
+  if (invoice?.pdfEsternoPresente) {
+    invoice.pdfEsternoBlob = await api.getPdf(invoice.id)
+  }
+
+  return invoice
+}
+
+/**
+ * EXTENSION POINT: send to the Interchange System (SdI).
+ * The tax agency has no direct API, and the tax drawer (cassetto fiscale) is
+ * not a send channel. There are three ways: upload the XML by hand on the
+ * Fatture e Corrispettivi portal; send it by PEC to sdi01@pec.fatturapa.it
+ * (can be automated, needs no accreditation); get accredited as an
+ * intermediary on SDICoop. None is in place yet.
+ */
+async function sendToSdi() {
+  throw new Error('Invio SdI non ancora disponibile')
+}
+
+/**
  * Invoice store: the list, plus the calls that save, issue, change and
  * delete one invoice.
  */
@@ -19,17 +48,6 @@ export const useInvoicesStore = defineStore('invoices', () => {
     loaded.value = true
 
     return list.value
-  }
-
-  async function get(id) {
-    const invoice = await api.get(`/fatture/${Number(id)}`)
-
-    // The PDF binary is not in the JSON: download it only when it exists.
-    if (invoice?.pdfEsternoPresente) {
-      invoice.pdfEsternoBlob = await api.getPdf(invoice.id)
-    }
-
-    return invoice
   }
 
   // Save an internal invoice as a draft: no number is taken until the invoice
@@ -111,23 +129,11 @@ export const useInvoicesStore = defineStore('invoices', () => {
     await load()
   }
 
-  /**
-   * EXTENSION POINT: send to the Interchange System (SdI).
-   * The tax agency has no direct API, and the tax drawer (cassetto fiscale) is
-   * not a send channel. There are three ways: upload the XML by hand on the
-   * Fatture e Corrispettivi portal; send it by PEC to sdi01@pec.fatturapa.it
-   * (can be automated, needs no accreditation); get accredited as an
-   * intermediary on SDICoop. None is in place yet.
-   */
-  async function sendToSdi() {
-    throw new Error('Invio SdI non ancora disponibile')
-  }
-
   return {
     list,
     loaded,
     load,
-    get,
+    get: getInvoice,
     saveDraft,
     saveExternal,
     issue,

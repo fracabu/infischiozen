@@ -21,7 +21,8 @@ export default defineConfig([
       eqeqeq: ["error", "always"],
       "no-console": "off",
       "prefer-const": "error",
-      "unicorn/prevent-abbreviations": "off",
+      // Renamed from unicorn/prevent-abbreviations in eslint-plugin-unicorn 80.
+      "unicorn/name-replacements": "off",
       // rule-mcp file tree: PascalCase component folders, camelCase modules.
       "unicorn/filename-case": ["error", { cases: { kebabCase: true, camelCase: true, pascalCase: true } }],
       // JSDoc keeps its leading asterisks: rule-mcp requires JSDoc blocks.

@@ -17,12 +17,14 @@
  */
 import { readFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { dirname, join, resolve } from 'node:path'
+import path from 'node:path'
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const ENV_FILE = join(ROOT, '.env.local')
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
+const ENV_FILE = path.join(ROOT, '.env.local')
 
-/** Read .env.local into process.env. A variable already set wins. */
+/**
+ * Read .env.local into process.env. A variable already set wins.
+ */
 function loadEnv() {
   let raw
 
@@ -33,14 +35,21 @@ function loadEnv() {
   }
 
   for (const line of raw.split('\n')) {
-    if (line.trim().startsWith('#')) {
+    if (line.trimStart().startsWith('#')) {
       continue
     }
 
     const match = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.+?)\s*$/)
 
-    if (match && !process.env[match[1]]) {
-      process.env[match[1]] = match[2].replaceAll(/^["']|["']$/g, '')
+    if (!match) {
+      continue
+    }
+
+    const [, name, value] = match
+    const current = process.env[name]
+
+    if (!current) {
+      process.env[name] = value.replaceAll(/^["']|["']$/g, '')
     }
   }
 }
@@ -50,25 +59,27 @@ function loadEnv() {
 const PLACEHOLDER = 'postgresql://utente:password@host/database'
 
 /**
- * @returns {string|null} the Neon connection string, or null for local mode
+ * @returns {string|undefined} the Neon connection string, or undefined for local mode
  */
 function neonUrl() {
   const url = process.env.DATABASE_URL || process.env.POSTGRES_URL
 
-  if (!url || url.startsWith(PLACEHOLDER)) {
-    return null
+  if (url && !url.startsWith(PLACEHOLDER)) {
+    return url
   }
-
-  return url
 }
 
 // The tagged template becomes a query with $1, $2, ...: the values always
 // travel as parameters, never pasted into the text.
 function adaptPglite(db) {
-  const query = async (text, params = []) => (await db.query(text, params)).rows
+  const query = async (text, params = []) => {
+    const result = await db.query(text, params)
+
+    return result.rows
+  }
 
   const sql = (strings, ...values) =>
-    query(strings.reduce((sum, part, i) => `${sum}$${i}${part}`), values)
+    query(strings.map((part, i) => (i === 0 ? part : `$${i}${part}`)).join(''), values)
 
   sql.query = query
   sql.close = () => db.close()
@@ -94,7 +105,7 @@ export async function connect() {
     return sql
   }
 
-  const dataDir = resolve(ROOT, process.env.CARTELLA_DATI || 'dati')
+  const dataDir = path.resolve(ROOT, process.env.CARTELLA_DATI || 'dati')
   mkdirSync(dataDir, { recursive: true })
   const { PGlite } = await import('@electric-sql/pglite')
   const db = await PGlite.create(dataDir)
@@ -113,13 +124,13 @@ export async function connect() {
  * @returns {Promise<number>} number of statements applied
  */
 export async function applySchema(sql, { file = 'schema.sql', log = () => {} } = {}) {
-  const ddl = readFileSync(join(ROOT, 'db', file), 'utf8')
+  const ddl = readFileSync(path.join(ROOT, 'db', file), 'utf8')
 
   // The Neon HTTP driver runs one statement at a time: split on the ';' at
   // line end, and leave out the comments (they can hold ';').
   const statements = ddl
     .split('\n')
-    .filter((line) => !line.trim().startsWith('--'))
+    .filter((line) => !line.trimStart().startsWith('--'))
     .join('\n')
     .split(/;\s*$/m)
     .map((statement) => statement.trim())

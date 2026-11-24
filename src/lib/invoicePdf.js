@@ -60,7 +60,7 @@ export async function downloadInvoicePdf(invoice, settings) {
   const client = invoice.clienteSnapshot || {}
 
   // Logo from Settings. With no logo the heading is the seller name.
-  const logo = seller.logoBase64 || null
+  const logo = seller.logoBase64
   const heading = (seller.ragioneSociale || `${seller.nome || ''} ${seller.cognome || ''}`).trim()
 
   const number = invoice.numero ? `${invoice.numero}/${invoice.anno}` : 'Bozza'
@@ -97,7 +97,7 @@ export async function downloadInvoicePdf(invoice, settings) {
 
     return [
       { text: description, style: 'descriptionCell' },
-      { text: euro(line.totaleRiga != null ? line.totaleRiga : quantity * (Number(line.prezzoUnitario) || 0)), style: 'amountCell' }
+      { text: euro(line.totaleRiga ?? quantity * (Number(line.prezzoUnitario) || 0)), style: 'amountCell' }
     ]
   })
 
@@ -111,9 +111,7 @@ export async function downloadInvoicePdf(invoice, settings) {
         { text: `Totale prestazioni: ${euro(invoice.imponibile)}`, width: 'auto', style: 'summaryLine' }
       ],
       margin: [0, 8, 0, 0]
-    })
-
-    summary.push({
+    }, {
       columns: [
         { text: `Rivalsa ${invoice.percentualeRivalsa || seller.percentualeRivalsaInps || 4}% GS INPS su ${euro(invoice.imponibile)}`, width: '*', style: 'summaryLabel' },
         { text: euro(invoice.rivalsaInps), width: 'auto', style: 'summaryLine' }
@@ -145,15 +143,19 @@ export async function downloadInvoicePdf(invoice, settings) {
   const paymentMethod = (invoice.modalitaPagamento || '').toLowerCase()
 
   if (paymentMethod.includes('paypal')) {
-    paymentLines.push({ text: 'PayPal', style: 'dataLine' })
-    paymentLines.push({ text: `E-mail: ${seller.email || ''}`, style: 'dataLine' })
+    paymentLines.push(
+      { text: 'PayPal', style: 'dataLine' },
+      { text: `E-mail: ${seller.email || ''}`, style: 'dataLine' },
+    )
   } else if (paymentMethod.includes('bonifico')) {
-    paymentLines.push({ text: 'Bonifico', style: 'dataLine' })
-    paymentLines.push({ text: `Intestato a: ${seller.intestatarioIban || (seller.nome + ' ' + seller.cognome)}`, style: 'dataLine' })
-    paymentLines.push({ text: `IBAN: ${seller.iban || ''}`, style: 'dataLine' })
+    paymentLines.push(
+      { text: 'Bonifico', style: 'dataLine' },
+      { text: `Intestato a: ${seller.intestatarioIban || (seller.nome + ' ' + seller.cognome)}`, style: 'dataLine' },
+      { text: `IBAN: ${seller.iban || ''}`, style: 'dataLine' },
+    )
   } else {
     // An em dash when the invoice has no payment method.
-    paymentLines.push({ text: invoice.modalitaPagamento || '\u2014', style: 'dataLine' })
+    paymentLines.push({ text: invoice.modalitaPagamento || '\u{2014}', style: 'dataLine' })
   }
 
   if (invoice.scadenzaPagamento) {
@@ -215,7 +217,7 @@ export async function downloadInvoicePdf(invoice, settings) {
           ]
         },
         layout: {
-          hLineWidth: (i, node) => (i === 0 || i === 1 || i === node.table.body.length ? 0.8 : 0.4),
+          hLineWidth: (i, node) => ([0, 1, node.table.body.length].includes(i) ? 0.8 : 0.4),
           vLineWidth: () => 0,
           hLineColor: () => '#d0d0cc',
           paddingTop: () => 6,

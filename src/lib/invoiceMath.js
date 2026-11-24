@@ -32,24 +32,25 @@ export function computeInvoice(lines, settings) {
   const options = settings || {}
   const list = Array.isArray(lines) ? lines : []
 
-  const linesSum = round2(
-    list.reduce((sum, line) => {
-      const quantity = Number(line.quantita) || 0
-      const price = Number(line.prezzoUnitario) || 0
+  let rawSum = 0
 
-      return sum + quantity * price
-    }, 0)
-  )
+  for (const line of list) {
+    const quantity = Number(line.quantita) || 0
+    const price = Number(line.prezzoUnitario) || 0
+    rawSum += quantity * price
+  }
+
+  const linesSum = round2(rawSum)
 
   const percent = options.applicaRivalsaInps ? Number(options.percentualeRivalsaInps) || 0 : 0
-  const grossPrices = options.prezziLordi === true
+  const isGrossPrices = options.prezziLordi === true
 
   let imponibile
   let rivalsaInps = 0
 
   if (percent === 0) {
     imponibile = linesSum
-  } else if (grossPrices) {
+  } else if (isGrossPrices) {
     // The line price is already the total: divide back. The charge is the
     // difference, so the three numbers always add up to the exact sum, also
     // after rounding.

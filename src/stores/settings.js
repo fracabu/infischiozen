@@ -10,7 +10,7 @@ import { api } from '../lib/api'
  * Settings store: one settings record, loaded once.
  */
 export const useSettingsStore = defineStore('settings', () => {
-  const data = ref(null)
+  const data = ref()
   const loaded = ref(false)
 
   async function load() {

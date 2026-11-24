@@ -7,6 +7,16 @@ import { ref } from 'vue'
 import { api } from '../lib/api'
 
 /**
+ * Read one client from the API.
+ *
+ * @param {number|string} id
+ * @returns {Promise<object>} the client record
+ */
+async function getClient(id) {
+  return api.get(`/clienti/${Number(id)}`)
+}
+
+/**
  * Client store: the list, plus read, save and delete of one client.
  */
 export const useClientsStore = defineStore('clients', () => {
@@ -18,10 +28,6 @@ export const useClientsStore = defineStore('clients', () => {
     loaded.value = true
 
     return list.value
-  }
-
-  async function get(id) {
-    return api.get(`/clienti/${Number(id)}`)
   }
 
   async function save(client) {
@@ -39,5 +45,5 @@ export const useClientsStore = defineStore('clients', () => {
     await load()
   }
 
-  return { list, loaded, load, get, save, remove }
+  return { list, loaded, load, get: getClient, save, remove }
 })

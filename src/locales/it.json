@@ -302,5 +302,27 @@
     "pdfError": "Errore nella generazione del PDF: {message}",
     "deleteTitle": "Elimina bozza",
     "deleteMessage": "Eliminare definitivamente questa bozza di fattura?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "yearLabel": "Anno",
+    "newInvoice": "+ Crea fattura",
+    "summaryLabel": "Riepilogo {year}",
+    "clients": "Clienti in anagrafica",
+    "invoices": "Fatture {year}",
+    "taxable": "Fatturato {year} (imponibile)",
+    "documents": "Totale documenti {year}",
+    "unpaid": "Fatture non ancora pagate",
+    "monthlyTitle": "Fatturato {year} per mese",
+    "runningTitle": "Andamento progressivo {year}",
+    "runningSummary": "Fatturato progressivo {year}: {amount} a fine anno.",
+    "noData": "Nessun dato per il {year}.",
+    "concentrationLabel": "Concentrazione clienti {year}",
+    "topClient": "Fatturato {year} dal primo cliente",
+    "topThree": "Fatturato {year} dai primi 3 clienti",
+    "billedClients": "Clienti fatturati nel {year}",
+    "percent": "{value}%",
+    "recentTitle": "Ultime fatture",
+    "noneYet": "Nessuna fattura ancora. Crea la prima fattura per iniziare."
   }
 }

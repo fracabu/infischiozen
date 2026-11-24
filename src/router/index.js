@@ -16,7 +16,7 @@ function lazy(load, name) {
 }
 
 const routes = [
-  { path: '/', name: 'dashboard', component: () => import('../views/Dashboard.vue') },
+  { path: '/', name: 'dashboard', component: lazy(() => import('../views/Dashboard'), 'Dashboard') },
   { path: '/clienti', name: 'clienti', component: lazy(() => import('../views/Clients'), 'Clients') },
   { path: '/clienti/nuovo', name: 'cliente-nuovo', component: lazy(() => import('../views/ClientForm'), 'ClientForm') },
   { path: '/clienti/:id', name: 'cliente-modifica', component: lazy(() => import('../views/ClientForm'), 'ClientForm') },

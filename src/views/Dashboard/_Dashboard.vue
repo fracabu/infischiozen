@@ -6,8 +6,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useClientiStore } from '../../stores/clienti'
-import { useFattureStore } from '../../stores/fatture'
+import { useClientsStore } from '../../stores/clients'
+import { useInvoicesStore } from '../../stores/invoices'
 import { formatEuro, formatDate } from '../../lib/format'
 import { clientName, invoiceNumber } from '../../lib/displayNames'
 import {
@@ -25,22 +25,22 @@ import './_Dashboard.css'
 const RECENT_COUNT = 6
 const router = useRouter()
 const { t, locale } = useI18n()
-const clientStore = useClientiStore()
-const invoiceStore = useFattureStore()
+const clientStore = useClientsStore()
+const invoiceStore = useInvoicesStore()
 const currentYear = new Date().getFullYear()
 const year = ref(currentYear)
 
-onMounted(() => Promise.all([clientStore.carica(), invoiceStore.carica()]))
+onMounted(() => Promise.all([clientStore.load(), invoiceStore.load()]))
 
-const years = computed(() => dashboardYears(invoiceStore.lista, currentYear))
-const counted = computed(() => countedInvoices(invoiceStore.lista))
+const years = computed(() => dashboardYears(invoiceStore.list, currentYear))
+const counted = computed(() => countedInvoices(invoiceStore.list))
 const yearInvoices = computed(() => invoicesOfYear(counted.value, year.value))
 const unpaid = computed(() => counted.value.filter((invoice) => invoice.stato !== 'pagata'))
 const months = computed(() => monthlyTotals(yearInvoices.value))
 const running = computed(() => runningTotals(months.value))
 const clientTotals = computed(() => totalsByClient(yearInvoices.value))
 const hasData = computed(() => months.value.some((value) => value > 0))
-const recent = computed(() => invoiceStore.lista.slice(0, RECENT_COUNT))
+const recent = computed(() => invoiceStore.list.slice(0, RECENT_COUNT))
 
 /** Short month names in the UI language, January first. */
 const monthNames = computed(() => {
@@ -99,7 +99,7 @@ const areaPoints = computed(() => `0,100 ${linePoints.value} 100,100`)
     <section data-part="stats" :aria-label="t('dashboard.summaryLabel', { year })">
       <dl data-part="card">
         <dt>{{ t('dashboard.clients') }}</dt>
-        <dd>{{ clientStore.lista.length }}</dd>
+        <dd>{{ clientStore.list.length }}</dd>
       </dl>
       <dl data-part="card">
         <dt>{{ t('dashboard.invoices', { year }) }}</dt>

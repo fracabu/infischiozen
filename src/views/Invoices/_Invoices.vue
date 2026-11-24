@@ -5,7 +5,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useFattureStore } from '../../stores/fatture'
+import { useInvoicesStore } from '../../stores/invoices'
 import { formatEuro, formatDate } from '../../lib/format'
 import { clientName, invoiceNumber } from '../../lib/displayNames'
 import { invoiceStatuses } from '../../lib/invoiceStatus'
@@ -13,17 +13,17 @@ import './_Invoices.css'
 
 const router = useRouter()
 const { t } = useI18n()
-const store = useFattureStore()
+const store = useInvoicesStore()
 const year = ref('')
 const status = ref('')
 
-onMounted(() => store.carica())
+onMounted(() => store.load())
 
 /** Years that have at least one numbered invoice, newest first. */
-const years = computed(() => [...new Set(store.lista.map((invoice) => invoice.anno).filter(Boolean))].toSorted((a, b) => b - a))
+const years = computed(() => [...new Set(store.list.map((invoice) => invoice.anno).filter(Boolean))].toSorted((a, b) => b - a))
 
 const filtered = computed(() =>
-  store.lista.filter(
+  store.list.filter(
     (invoice) =>
       (!year.value || String(invoice.anno) === String(year.value)) && (!status.value || invoice.stato === status.value),
   ),
@@ -128,7 +128,7 @@ function openInvoice(invoice) {
           </tr>
         </tbody>
       </table>
-      <p v-else-if="store.lista.length > 0" data-part="empty">
+      <p v-else-if="store.list.length > 0" data-part="empty">
         {{ t('invoices.noMatch') }}
       </p>
       <p v-else data-part="empty">

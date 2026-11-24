@@ -8,14 +8,14 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useImpostazioniStore } from '../../stores/impostazioni'
+import { useSettingsStore } from '../../stores/settings'
 import { DEFAULT_SETTINGS } from '../../data/defaultSettings'
 import { settingsSchema, LEGAL_TEXT_MAX } from '../../lib/settingsSchema'
 import './_Settings.css'
 
 const route = useRoute()
 const { t } = useI18n()
-const store = useImpostazioniStore()
+const store = useSettingsStore()
 const loaded = ref(false)
 const saved = ref(false)
 const serverError = ref('')
@@ -90,8 +90,8 @@ const hasErrors = computed(() => submitCount.value > 0 && Object.keys(errors.val
 const currentYear = new Date().getFullYear()
 
 onMounted(async () => {
-  await store.carica()
-  resetForm({ values: { ...DEFAULT_SETTINGS, ...store.dati } })
+  await store.load()
+  resetForm({ values: { ...DEFAULT_SETTINGS, ...store.data } })
   loaded.value = true
 })
 
@@ -163,8 +163,8 @@ const onSubmit = handleSubmit(async (settings) => {
   serverError.value = ''
 
   try {
-    await store.salva(settings)
-    resetForm({ values: { ...DEFAULT_SETTINGS, ...store.dati } })
+    await store.save(settings)
+    resetForm({ values: { ...DEFAULT_SETTINGS, ...store.data } })
     saved.value = true
     welcome.value = false
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -272,7 +272,7 @@ const onSubmit = handleSubmit(async (settings) => {
       </h2>
       <dl data-part="numbering">
         <dt>{{ t('settingsForm.nextNumber') }}</dt>
-        <dd>{{ store.dati?.prossimoNumeroFattura }}/{{ currentYear }}</dd>
+        <dd>{{ store.data?.prossimoNumeroFattura }}/{{ currentYear }}</dd>
       </dl>
       <i18n-t keypath="settingsForm.numberingNote" tag="p" data-part="note">
         <template #path>

@@ -9,9 +9,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useClientiStore } from '../../stores/clienti'
-import { useFattureStore } from '../../stores/fatture'
-import { useImpostazioniStore } from '../../stores/impostazioni'
+import { useClientsStore } from '../../stores/clients'
+import { useInvoicesStore } from '../../stores/invoices'
+import { useSettingsStore } from '../../stores/settings'
 import { externalInvoiceSchema, externalStatuses, buildExternalInvoice } from '../../lib/externalInvoice'
 import { emptyLine } from '../../lib/invoiceDraft'
 import { computeInvoice } from '../../lib/invoiceMath'
@@ -23,9 +23,9 @@ import './_ExternalInvoiceForm.css'
 
 const router = useRouter()
 const { t } = useI18n()
-const clientStore = useClientiStore()
-const invoiceStore = useFattureStore()
-const settingsStore = useImpostazioniStore()
+const clientStore = useClientsStore()
+const invoiceStore = useInvoicesStore()
+const settingsStore = useSettingsStore()
 const paymentMethods = ['Bonifico', 'PayPal', 'Contanti', 'Altro']
 const fieldOrder = ['numero', 'data', 'stato', 'clienteId', 'righe']
 const serverError = ref('')
@@ -57,13 +57,13 @@ const [applyRivalsa, applyRivalsaAttrs] = defineField('applicaRivalsa', options)
 const [notes, notesAttrs] = defineField('note', options)
 
 onMounted(async () => {
-  await Promise.all([clientStore.carica(), settingsStore.carica()])
+  await Promise.all([clientStore.load(), settingsStore.load()])
   // The rivalsa of one invoice starts from the default in the settings.
-  setFieldValue('applicaRivalsa', Boolean(settingsStore.dati?.applicaRivalsaInps))
+  setFieldValue('applicaRivalsa', Boolean(settingsStore.data?.applicaRivalsaInps))
 })
 
-const settings = computed(() => settingsStore.dati || {})
-const client = computed(() => clientStore.lista.find((item) => String(item.id) === String(clientId.value)))
+const settings = computed(() => settingsStore.data || {})
+const client = computed(() => clientStore.list.find((item) => String(item.id) === String(clientId.value)))
 const filledLines = computed(() => lines.value.filter((line) => line.descrizione))
 // Only lines with a description are saved, so only they count (bug 20).
 const amounts = computed(() => computeInvoice(filledLines.value, { ...settings.value, applicaRivalsaInps: applyRivalsa.value }))
@@ -105,7 +105,7 @@ const onSubmit = handleSubmit(async (values) => {
   serverError.value = ''
 
   try {
-    const id = await invoiceStore.salvaEsterna(buildExternalInvoice(values, client.value, settings.value, pdf.value))
+    const id = await invoiceStore.saveExternal(buildExternalInvoice(values, client.value, settings.value, pdf.value))
 
     router.push({ name: 'fattura-dettaglio', params: { id } })
   } catch (error) {
@@ -190,7 +190,7 @@ const onSubmit = handleSubmit(async (values) => {
 
       <fieldset data-part="card">
         <legend>{{ t('externalForm.clientTitle') }}</legend>
-        <p v-if="clientStore.lista.length === 0" data-part="notice">
+        <p v-if="clientStore.list.length === 0" data-part="notice">
           {{ t('invoiceForm.noClients') }}
           <router-link :to="{ name: 'cliente-nuovo' }">
             {{ t('invoiceForm.createClient') }}
@@ -212,7 +212,7 @@ const onSubmit = handleSubmit(async (values) => {
             <option value="">
               {{ t('invoiceForm.choose') }}
             </option>
-            <option v-for="item in clientStore.lista" :key="item.id" :value="item.id">
+            <option v-for="item in clientStore.list" :key="item.id" :value="item.id">
               {{ clientName(item) }}
             </option>
           </select>

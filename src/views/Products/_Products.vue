@@ -6,7 +6,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useProdottiStore } from '../../stores/prodotti'
+import { useProductsStore } from '../../stores/products'
 import { productUnits } from '../../lib/productSchema'
 import { formatEuro } from '../../lib/format'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
@@ -14,20 +14,20 @@ import './_Products.css'
 
 const router = useRouter()
 const { t } = useI18n()
-const store = useProdottiStore()
+const store = useProductsStore()
 const query = ref('')
 const toDelete = ref(null)
 
-onMounted(() => store.carica())
+onMounted(() => store.load())
 
 const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase()
 
   if (!needle) {
-    return store.lista
+    return store.list
   }
 
-  return store.lista.filter((product) =>
+  return store.list.filter((product) =>
     [product.nome, product.categoria, product.descrizione]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(needle)),
@@ -63,11 +63,11 @@ function openProduct(product) {
  * @param {object} product
  */
 async function toggleActive(product) {
-  await store.salva({ ...product, attivo: !product.attivo })
+  await store.save({ ...product, attivo: !product.attivo })
 }
 
 async function confirmDelete() {
-  await store.elimina(toDelete.value.id)
+  await store.remove(toDelete.value.id)
   toDelete.value = null
 }
 
@@ -152,7 +152,7 @@ async function confirmDelete() {
           </tr>
         </tbody>
       </table>
-      <p v-else-if="store.lista.length > 0" data-part="empty">
+      <p v-else-if="store.list.length > 0" data-part="empty">
         {{ t('products.noMatch') }}
       </p>
       <p v-else data-part="empty">

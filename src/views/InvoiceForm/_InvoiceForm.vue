@@ -9,10 +9,10 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useClientiStore } from '../../stores/clienti'
-import { useProdottiStore } from '../../stores/prodotti'
-import { useFattureStore } from '../../stores/fatture'
-import { useImpostazioniStore } from '../../stores/impostazioni'
+import { useClientsStore } from '../../stores/clients'
+import { useProductsStore } from '../../stores/products'
+import { useInvoicesStore } from '../../stores/invoices'
+import { useSettingsStore } from '../../stores/settings'
 import { invoiceDraftSchema, emptyLine, buildInvoice } from '../../lib/invoiceDraft'
 import { computeInvoice, lineTotal } from '../../lib/invoiceMath'
 import { formatEuro, todayIso } from '../../lib/format'
@@ -23,10 +23,10 @@ import './_InvoiceForm.css'
 
 const router = useRouter()
 const { t } = useI18n()
-const clientStore = useClientiStore()
-const productStore = useProdottiStore()
-const invoiceStore = useFattureStore()
-const settingsStore = useImpostazioniStore()
+const clientStore = useClientsStore()
+const productStore = useProductsStore()
+const invoiceStore = useInvoicesStore()
+const settingsStore = useSettingsStore()
 const steps = ['client', 'lines', 'summary']
 const stepField = { 1: 'clienteId', 2: 'righe' }
 const paymentMethods = ['Bonifico', 'PayPal', 'Contanti', 'Altro']
@@ -56,14 +56,14 @@ const [notes, notesAttrs] = defineField('note', options)
 const [applyRivalsa, applyRivalsaAttrs] = defineField('applicaRivalsa', options)
 
 onMounted(async () => {
-  await Promise.all([clientStore.carica(), productStore.carica(), settingsStore.carica()])
+  await Promise.all([clientStore.load(), productStore.load(), settingsStore.load()])
   // The rivalsa of one invoice starts from the default in the settings.
-  setFieldValue('applicaRivalsa', Boolean(settingsStore.dati?.applicaRivalsaInps))
+  setFieldValue('applicaRivalsa', Boolean(settingsStore.data?.applicaRivalsaInps))
 })
 
-const settings = computed(() => settingsStore.dati || {})
+const settings = computed(() => settingsStore.data || {})
 const rivalsaPercent = computed(() => settings.value.percentualeRivalsaInps || 4)
-const client = computed(() => clientStore.lista.find((item) => String(item.id) === String(clientId.value)))
+const client = computed(() => clientStore.list.find((item) => String(item.id) === String(clientId.value)))
 const filledLines = computed(() => lines.value.filter((line) => line.descrizione))
 // Only lines with a description are saved, so only they count (bug 20).
 const amounts = computed(() => computeInvoice(filledLines.value, { ...settings.value, applicaRivalsaInps: applyRivalsa.value }))
@@ -104,7 +104,7 @@ function submitAs(mode) {
     const invoice = buildInvoice(values, client.value, settings.value)
 
     try {
-      const id = mode === 'issue' ? await invoiceStore.emetti(invoice) : await invoiceStore.salvaBozza(invoice)
+      const id = mode === 'issue' ? await invoiceStore.issue(invoice) : await invoiceStore.saveDraft(invoice)
 
       router.push({ name: 'fattura-dettaglio', params: { id } })
     } catch (error) {
@@ -146,7 +146,7 @@ const issue = submitAs('issue')
         <h2 id="invoice-client-title">
           {{ t('invoiceForm.clientTitle') }}
         </h2>
-        <p v-if="clientStore.lista.length === 0" data-part="notice">
+        <p v-if="clientStore.list.length === 0" data-part="notice">
           {{ t('invoiceForm.noClients') }}
           <router-link :to="{ name: 'cliente-nuovo' }">
             {{ t('invoiceForm.createClient') }}
@@ -167,7 +167,7 @@ const issue = submitAs('issue')
             <option value="">
               {{ t('invoiceForm.choose') }}
             </option>
-            <option v-for="item in clientStore.lista" :key="item.id" :value="item.id">
+            <option v-for="item in clientStore.list" :key="item.id" :value="item.id">
               {{ clientName(item) }}
             </option>
           </select>
@@ -189,7 +189,7 @@ const issue = submitAs('issue')
         <h2 id="invoice-lines-title">
           {{ t('invoiceForm.linesTitle') }}
         </h2>
-        <InvoiceLines v-model="lines" :products="productStore.attivi" />
+        <InvoiceLines v-model="lines" :products="productStore.active" />
         <InvoiceTotals :amounts="amounts" />
       </section>
 

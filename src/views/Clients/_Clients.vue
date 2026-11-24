@@ -5,27 +5,27 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useClientiStore } from '../../stores/clienti'
+import { useClientsStore } from '../../stores/clients'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { clientName } from '../../lib/displayNames'
 import './_Clients.css'
 
 const router = useRouter()
 const { t } = useI18n()
-const store = useClientiStore()
+const store = useClientsStore()
 const query = ref('')
 const toDelete = ref(null)
 
-onMounted(() => store.carica())
+onMounted(() => store.load())
 
 const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase()
 
   if (!needle) {
-    return store.lista
+    return store.list
   }
 
-  return store.lista.filter((client) =>
+  return store.list.filter((client) =>
     [clientName(client), client.email, client.partitaIVA, client.codiceFiscale, client.citta]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(needle)),
@@ -42,7 +42,7 @@ function openClient(client) {
 }
 
 async function confirmDelete() {
-  await store.elimina(toDelete.value.id)
+  await store.remove(toDelete.value.id)
   toDelete.value = null
 }
 
@@ -121,7 +121,7 @@ async function confirmDelete() {
           </tr>
         </tbody>
       </table>
-      <p v-else-if="store.lista.length > 0" data-part="empty">
+      <p v-else-if="store.list.length > 0" data-part="empty">
         {{ t('clients.noMatch') }}
       </p>
       <p v-else data-part="empty">

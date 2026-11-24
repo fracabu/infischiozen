@@ -6,17 +6,17 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { AppSidebar } from './components/AppSidebar'
-import { useImpostazioniStore } from './stores/impostazioni'
+import { useSettingsStore } from './stores/settings'
 import './App.css'
 
 const router = useRouter()
-const settings = useImpostazioniStore()
+const settings = useSettingsStore()
 
 onMounted(async () => {
   // The first navigation loads its page lazily: wait for it, or the route has no name yet.
-  await Promise.all([settings.carica(), router.isReady()])
+  await Promise.all([settings.load(), router.isReady()])
 
-  if (settings.primoAvvio && router.currentRoute.value.name === 'dashboard') {
+  if (settings.isFirstLaunch && router.currentRoute.value.name === 'dashboard') {
     router.replace({ name: 'impostazioni', query: { benvenuto: '1' } })
   }
 })

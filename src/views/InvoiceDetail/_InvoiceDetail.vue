@@ -7,8 +7,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useFattureStore } from '../../stores/fatture'
-import { useImpostazioniStore } from '../../stores/impostazioni'
+import { useInvoicesStore } from '../../stores/invoices'
+import { useSettingsStore } from '../../stores/settings'
 import { formatEuro, formatDate } from '../../lib/format'
 import { downloadInvoicePdf } from '../../lib/invoicePdf'
 import { buildInvoiceXml, checkXmlFields, xmlFileName } from '../../lib/invoiceXml'
@@ -21,15 +21,15 @@ import './_InvoiceDetail.css'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const invoiceStore = useFattureStore()
-const settingsStore = useImpostazioniStore()
+const invoiceStore = useInvoicesStore()
+const settingsStore = useSettingsStore()
 const invoice = ref()
 const message = ref('')
 const xmlErrors = ref([])
 const confirmDelete = ref(false)
 
 onMounted(async () => {
-  await settingsStore.carica()
+  await settingsStore.load()
   invoice.value = await invoiceStore.get(route.params.id)
 
   if (!invoice.value) {
@@ -37,7 +37,7 @@ onMounted(async () => {
   }
 })
 
-const settings = computed(() => settingsStore.dati || {})
+const settings = computed(() => settingsStore.data || {})
 const isDraft = computed(() => invoice.value?.stato === 'bozza')
 const isExternal = computed(() => invoice.value?.origine === 'esterna')
 const client = computed(() => invoice.value?.clienteSnapshot || {})
@@ -98,7 +98,7 @@ async function downloadXml() {
 
   try {
     if (!invoice.value.xmlString) {
-      await invoiceStore.salvaXml(invoice.value.id, xml)
+      await invoiceStore.saveXml(invoice.value.id, xml)
       invoice.value.xmlString = xml
     }
 
@@ -119,8 +119,8 @@ async function changeStatus(status) {
 
   try {
     await (status === 'emessa' && !invoice.value.numero
-      ? invoiceStore.emetti(invoice.value)
-      : invoiceStore.cambiaStato(invoice.value.id, status))
+      ? invoiceStore.issue(invoice.value)
+      : invoiceStore.setStatus(invoice.value.id, status))
     await reload()
   } catch (error) {
     showError(error)
@@ -149,7 +149,7 @@ async function attachPdf(event) {
   message.value = ''
 
   try {
-    await invoiceStore.allegaPdfEsterno(invoice.value.id, file)
+    await invoiceStore.attachExternalPdf(invoice.value.id, file)
     await reload()
   } catch (error) {
     showError(error)
@@ -157,7 +157,7 @@ async function attachPdf(event) {
 }
 
 async function deleteDraft() {
-  await invoiceStore.elimina(invoice.value.id)
+  await invoiceStore.remove(invoice.value.id)
   router.push({ name: 'fatture' })
 }
 

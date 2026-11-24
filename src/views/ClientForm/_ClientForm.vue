@@ -8,8 +8,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useClientiStore } from '../../stores/clienti'
-import { useFattureStore } from '../../stores/fatture'
+import { useClientsStore } from '../../stores/clients'
+import { useInvoicesStore } from '../../stores/invoices'
 import { clientSchema, emptyClient } from '../../lib/clientSchema'
 import { formatEuro, formatDate } from '../../lib/format'
 import { invoiceNumber } from '../../lib/displayNames'
@@ -18,8 +18,8 @@ import './_ClientForm.css'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const clientStore = useClientiStore()
-const invoiceStore = useFattureStore()
+const clientStore = useClientsStore()
+const invoiceStore = useInvoicesStore()
 const clientTypes = ['privato', 'azienda', 'pa']
 
 const { defineField, handleSubmit, errors, isSubmitting, submitCount, resetForm, values } = useForm({
@@ -83,7 +83,7 @@ const invoices = computed(() => {
     return []
   }
 
-  return invoiceStore.lista.filter((invoice) => String(invoice.clienteId) === String(clientId.value))
+  return invoiceStore.list.filter((invoice) => String(invoice.clienteId) === String(clientId.value))
 })
 
 const invoiceTotal = computed(() => invoices.value.reduce((sum, invoice) => sum + (Number(invoice.totale) || 0), 0))
@@ -102,7 +102,7 @@ onMounted(async () => {
   }
 
   resetForm({ values: { ...emptyClient(), ...client } })
-  await invoiceStore.carica()
+  await invoiceStore.load()
 })
 
 /**
@@ -153,7 +153,7 @@ function cancel() {
 }
 
 const onSubmit = handleSubmit(async (client) => {
-  await clientStore.salva(client)
+  await clientStore.save(client)
   router.push({ name: 'clienti' })
 }, focusFirstError)
 </script>

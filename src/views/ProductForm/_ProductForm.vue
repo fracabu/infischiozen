@@ -8,13 +8,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useProdottiStore } from '../../stores/prodotti'
+import { useProductsStore } from '../../stores/products'
 import { productSchema, emptyProduct, productUnits } from '../../lib/productSchema'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const store = useProdottiStore()
+const store = useProductsStore()
 
 const { defineField, handleSubmit, errors, isSubmitting, submitCount, resetForm } = useForm({
   validationSchema: toTypedSchema(productSchema),
@@ -63,7 +63,7 @@ function cancel() {
 }
 
 const onSubmit = handleSubmit(async (product) => {
-  await store.salva(product)
+  await store.save(product)
   router.push({ name: 'prodotti' })
 }, focusFirstError)
 </script>

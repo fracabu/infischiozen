@@ -18,8 +18,8 @@ defineProps({
 
 const { t } = useI18n()
 
-// The model prop updates only on the next render. Two changes in the same
-// tick must build on the last array written, not on the old prop.
+// The model prop catches up only on the next render. Two changes in the
+// same tick build on the array written last.
 let current = lines.value
 
 watch(lines, (value) => {

@@ -4,11 +4,11 @@ Questo progetto nasce da un gestionale personale. Prima di renderlo generico ne
 abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
-Stato: **verificato con `vite build`, con 106 test Vitest sulle funzioni pure,
-con 31 test Playwright nel browser (27 di accessibilità con axe-core) e con una
-prova di tutte le API su un database PGlite nuovo e vuoto** (23 controlli).
-Quella prova ha trovato il bug #18. I test di accessibilità hanno trovato i bug
-#25 e #26.
+Stato: **verificato con `vite build`, con 125 test Vitest (106 sulle funzioni
+pure, 19 sulle API su un database PGlite nuovo e vuoto) e con 31 test
+Playwright nel browser (27 di accessibilità con axe-core)**. La prima prova
+delle API, fatta a mano, ha trovato il bug #18; oggi è il test automatico
+`tests/api.test.js`. I test di accessibilità hanno trovato i bug #25 e #26.
 
 ## Bug corretti
 
@@ -63,12 +63,10 @@ Quella prova ha trovato il bug #18. I test di accessibilità hanno trovato i bug
   fattura c'è PayPal o contanti.
 - **Nessuna autenticazione sulle API**: oggi va bene perché il server ascolta
   solo su 127.0.0.1. Prima di metterlo online serve un login.
-- **Test solo sulle funzioni pure**: `invoiceMath`, `invoiceXml` e le
-  validazioni di CF/P.IVA e gli schemi dei form hanno 106 test Vitest
-  (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20, #21 e #22. Server e query non hanno ancora test: servono un database
-  di prova. I test Playwright (`npm run test:e2e`) partono già su un database
-  di prova, ma oggi provano l'accessibilità e le eliminazioni rifiutate (bug
-  #24), non le regole fiscali del server.
+- **Test del server solo in locale**: `tests/api.test.js` prova le API su
+  PGlite (compresi i bug #6, #7, #8, #9, #10, #12, #17, #18 e #24 lato
+  server), non su Neon. Una differenza fra i due database, come quella del bug
+  #18, si vede solo provando anche su Neon.
 - **Accessibilità oltre axe**: un controllo automatico non vede tutto (ordine
   di lettura, testi che hanno senso solo a vista). Mancano una prova con un
   lettore di schermo (NVDA) e una prova di zoom al 200%.

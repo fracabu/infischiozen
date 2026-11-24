@@ -51,13 +51,13 @@ codice.
 
 Il progetto segue le regole di [rule-mcp](https://github.com/pixu1980/rule-mcp)
 ([ADR 001](docs/adr/001-adopt-rule-mcp-rules-enforced-with-eslint-and-rule-tool-check.md)).
-La migrazione va una schermata per volta: il codice vecchio ha ancora nomi
-italiani e classi CSS. **Il codice nuovo segue le regole nuove.** Come modello,
-guarda `src/views/Clients/` e `src/views/ClientForm/`.
+Tutto il codice segue già queste regole. Come modello, guarda
+`src/views/Clients/` e `src/views/ClientForm/`.
 
-- **Codice, commenti e nomi dei file in inglese.** I campi dei dati
-  (`codiceFiscale`, `partitaIVA`) restano in italiano finché store e server
-  non cambiano nome.
+- **Codice, commenti e nomi dei file in inglese.** I dati restano in italiano:
+  campi (`codiceFiscale`, `partitaIVA`), colonne, valori di stato, messaggi
+  d'errore del server
+  ([ADR 004](docs/adr/004-rename-code-to-english-keep-the-italian-data-contract.md)).
 - **Testi dell'interfaccia in `src/locales/it.json`**, letti con `t()` di
   vue-i18n ([ADR 002](docs/adr/002-use-vue-i18n-for-ui-text.md)).
 - **Un componente è una cartella**: `index.js` che esporta, `_Nome.vue` e,
@@ -104,8 +104,8 @@ npm run test:a11y    # solo i test di accessibilità
   attuali i casi dei bug di `REVIEW.md` sono segnati con il loro numero.
 - Ogni regola fiscale nuova porta con sé un test con i numeri: soglie, casi
   limite, arrotondamenti.
-- Se tocchi il server, provalo su un database vuoto: avvialo con una cartella
-  temporanea (`CARTELLA_DATI=/tmp/prova npm run api`) e chiama le API.
+- Se tocchi il server, aggiungi il caso a `tests/api.test.js`: avvia il server
+  su un database PGlite nuovo e vuoto, e lo cancella alla fine.
 
 ## Pull request
 

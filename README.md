@@ -201,7 +201,8 @@ src/
     externalInvoice.js  fattura emessa altrove: regole e documento
     invoiceStatus.js    stati della fattura e passaggi consentiti
   data/defaultSettings.js
-tests/                  test Vitest delle funzioni pure (calcolo, XML, validazioni)
+tests/                  test Vitest: funzioni pure (calcolo, XML, validazioni)
+  api.test.js           API su un database PGlite nuovo e vuoto
   a11y/                 test di accessibilità (Playwright + axe-core)
   e2e/                  test Playwright dei comportamenti
   support/              dati di prova, controllo axe, testi dell'interfaccia
@@ -231,11 +232,13 @@ Le regole principali:
   sotto `src/lib/` e i loro test;
 - **ogni decisione di architettura in un'ADR** in `docs/adr/`.
 
-La migrazione va **una schermata per volta** ed è in corso: le schermate non
-ancora migrate usano ancora `src/assets/main.css` e nomi in italiano.
+La migrazione a queste regole è **completa**: tutte le schermate seguono le
+regole, e il foglio di stile a classi del codice d'origine non c'è più. In
+italiano restano solo i dati (campi, colonne, stati) e i testi per l'utente
+([ADR 004](docs/adr/004-rename-code-to-english-keep-the-italian-data-contract.md)).
 rule-mcp serve solo a chi sviluppa con un agente AI. Per usare l'app o
 contribuire a mano non serve installarlo. ESLint (`npm run lint`) controlla lo
-stile del JavaScript. Per CSS e HTML il modello sono le schermate già migrate.
+stile del JavaScript. Per CSS e HTML il modello sono le schermate esistenti.
 
 ## Stato del progetto
 
@@ -244,15 +247,14 @@ Il codice nasce da un gestionale personale reso generico. In
 noti ancora aperti. In breve:
 
 - ✅ build di produzione provata;
-- ✅ **106 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
+- ✅ **125 test Vitest** (`npm test`): 106 su calcolo fattura, rivalsa, bollo,
   XML FatturaPA, validazioni di CF/P.IVA e schede cliente, prodotto e impostazioni, compresi i bug già corretti;
+  19 sulle API, su un database nuovo e vuoto: clienti, bozze, numerazione,
+  ordine delle date, fatture esterne, PDF allegati, annullamento;
 - ✅ **31 test nel browser** (`npm run test:e2e`): 27 di accessibilità con
   axe-core su tutte le schermate (struttura, form con errori, tastiera e focus,
   componenti) e 4 sulle eliminazioni rifiutate dal server (bug #24);
-- ✅ API provate su un database vuoto: clienti, bozze, numerazione, ordine
-  delle date, fatture esterne, PDF allegati, annullamento;
 - ⏳ XML **non ancora passato** dal validatore ufficiale FatturaPA;
-- ⏳ la prova delle API non è ancora un test automatico nel repository;
 - ❌ nessuna autenticazione: va bene in locale, non online;
 - la modalità di pagamento nell'XML è sempre bonifico (MP05).
 
@@ -261,7 +263,7 @@ noti ancora aperti. In breve:
 L'obiettivo è coprire quello che serve a un forfettario per non pagare un
 servizio esterno:
 
-- [ ] test automatici delle API su un database PGlite temporaneo
+- [x] test automatici delle API su un database PGlite temporaneo
 - [ ] invio allo SdI via PEC e lettura delle ricevute (consegna, scarto)
 - [ ] note di credito (TD04) per correggere una fattura emessa
 - [ ] stima di imposta sostitutiva e contributi INPS sull'incassato, con le

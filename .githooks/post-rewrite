@@ -1,0 +1,3 @@
+#!/bin/sh
+# rule-mcp: number pending ADRs when they land on the trunk
+rule-mcp handoff land --quiet --commit

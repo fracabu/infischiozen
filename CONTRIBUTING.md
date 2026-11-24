@@ -58,9 +58,11 @@ guarda `src/views/Clients/` e `src/views/ClientForm/`.
   non cambiano nome.
 - **Testi dell'interfaccia in `src/locales/it.json`**, letti con `t()` di
   vue-i18n ([ADR 002](docs/adr/002-use-vue-i18n-for-ui-text.md)).
-- **Un componente è una cartella**: `index.js` che esporta, `_Nome.vue` e
-  `_Nome.css`. Niente classi CSS né stili inline: selettori su elementi e
-  `data-part`. Niente `<div>` dove esiste un elemento semantico.
+- **Un componente è una cartella**: `index.js` che esporta, `_Nome.vue` e,
+  se ha stili suoi, `_Nome.css`. Gli stili comuni dei form (campi, card,
+  avviso di errore, pulsanti della pagina) sono in `src/styles/base.css`.
+  Niente classi CSS né stili inline: selettori su elementi e `data-part`.
+  Niente `<div>` dove esiste un elemento semantico.
 - **Form con vee-validate + zod.** Lo schema è una funzione pura in `src/lib/`
   (vedi `clientSchema.js`) con i suoi test.
 - **`npm run lint` deve passare** sui file che tocchi.

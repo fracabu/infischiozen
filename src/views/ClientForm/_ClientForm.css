@@ -1,55 +1,13 @@
 /**
  * FILE: _ClientForm.css
- * USAGE: Styles for the ClientForm view (create and edit a client)
+ * USAGE: Styles for the ClientForm view (create and edit a client). Fields,
+ *        cards, alert and actions come from src/styles/base.css.
  * SCOPE: article[data-part="client-form"]
  */
 
-/* ─── Action buttons ─── */
-article[data-part="client-form"] [data-part="actions"] {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  list-style: none;
-}
-
-article[data-part="client-form"] footer[data-part="actions"] {
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-/* ─── Error summary ─── */
-article[data-part="client-form"] [data-part="alert"] {
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #991b1b;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-}
-
-/* ─── Cards ─── */
-article[data-part="client-form"] [data-part="card"] {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 20px;
-  min-width: 0;
-  padding: 20px;
-  margin-bottom: 16px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-article[data-part="client-form"] legend {
-  float: left;
-  width: 100%;
-  margin-bottom: 14px;
-  font-weight: 600;
-}
-
+/* ─── Purchases card ─── */
 article[data-part="client-form"] section[data-part="card"] {
+  display: flex;
   flex-direction: column;
 }
 
@@ -59,69 +17,19 @@ article[data-part="client-form"] section[data-part="card"] h2 {
   font-weight: 600;
 }
 
-/* ─── Fields ─── */
-article[data-part="client-form"] [data-part="field"] {
-  display: flex;
-  flex: 1 1 260px;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 16px;
-}
-
-article[data-part="client-form"] [data-part="field"][data-width="wide"] {
-  flex-basis: 100%;
-}
-
-article[data-part="client-form"] label {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-article[data-part="client-form"] abbr {
-  color: var(--color-error);
-  text-decoration: none;
-}
-
-article[data-part="client-form"] input,
-article[data-part="client-form"] select,
-article[data-part="client-form"] textarea {
-  width: 100%;
-  padding: 9px 12px;
-  font-family: inherit;
-  font-size: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-article[data-part="client-form"] textarea {
-  min-height: 70px;
-  resize: vertical;
-}
-
-article[data-part="client-form"] [aria-invalid="true"] {
-  border-color: var(--color-error);
-}
-
-article[data-part="client-form"] [data-part="error"] {
-  font-size: 12px;
-  color: var(--color-error);
-}
-
-article[data-part="client-form"] [data-part="hint"],
 article[data-part="client-form"] [data-part="summary"],
 article[data-part="client-form"] [data-part="empty"] {
   font-size: 13px;
   color: var(--color-muted);
 }
 
-/* ─── Purchases ─── */
-article[data-part="client-form"] ul {
-  list-style: none;
-}
-
 article[data-part="client-form"] [data-part="summary"] {
   margin-bottom: 10px;
+}
+
+/* ─── Invoice list ─── */
+article[data-part="client-form"] ul {
+  list-style: none;
 }
 
 article[data-part="client-form"] [data-part="invoice"] {

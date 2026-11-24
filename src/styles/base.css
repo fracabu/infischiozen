@@ -192,3 +192,118 @@ header[data-part="page-header"] {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* ─── Page actions (header menu and footer of a view) ─── */
+header[data-part="page-header"] menu[data-part="actions"],
+article > footer[data-part="actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+article > footer[data-part="actions"] {
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* ─── Cards ─── */
+[data-part="card"] {
+  min-width: 0;
+  padding: 20px;
+  margin-bottom: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+fieldset[data-part="card"] > legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+/* ─── Error summary ─── */
+p[data-part="alert"] {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+
+/* ─── Form fields ─── */
+form[data-part="card"],
+form [data-part="card"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+
+[data-part="field"] {
+  display: flex;
+  flex: 1 1 260px;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  margin-bottom: 16px;
+  border: none;
+}
+
+[data-part="field"][data-width="wide"] {
+  flex-basis: 100%;
+}
+
+[data-part="field"] > label,
+[data-part="field"] > legend {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+[data-part="field"] abbr {
+  color: var(--color-error);
+  text-decoration: none;
+}
+
+[data-part="field"] input:not([type="checkbox"]),
+[data-part="field"] select,
+[data-part="field"] textarea {
+  width: 100%;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+[data-part="field"] textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+[data-part="field"] :is(input, select, textarea)[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+[data-part="field"] [data-part="error"] {
+  font-size: 12px;
+  color: var(--color-error);
+}
+
+[data-part="field"] [data-part="hint"] {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+[data-part="field"] label[data-part="checkbox"] {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 5px;
+  font-weight: 500;
+}

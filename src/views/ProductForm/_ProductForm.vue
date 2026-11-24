@@ -10,7 +10,6 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useProdottiStore } from '../../stores/prodotti'
 import { productSchema, emptyProduct, productUnits } from '../../lib/productSchema'
-import './_ProductForm.css'
 
 const route = useRoute()
 const router = useRouter()

@@ -184,7 +184,7 @@ server/index.mjs        API Express, in ascolto solo su 127.0.0.1
 server/mappa.mjs        traduzione fra righe del DB e oggetti dell'app
 src/
   views/                pagine; quelle già migrate hanno una cartella
-                        (es. Clients/, ProductForm/: index.js, _Nome.vue, _Nome.css)
+                        (es. Clients/: index.js, _Nome.vue, _Nome.css se serve)
   components/           componenti riusabili
   stores/               stato Pinia (clienti, fatture, prodotti, impostazioni)
   locales/it.json       tutti i testi dell'interfaccia (vue-i18n)

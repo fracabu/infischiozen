@@ -16,7 +16,8 @@
     "test:e2e": "playwright test -c tests/playwright.config.js",
     "test:a11y": "playwright test -c tests/playwright.config.js a11y/",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prepare": "git config core.hooksPath .githooks || exit 0"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.6.0",

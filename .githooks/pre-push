@@ -1,0 +1,21 @@
+#!/bin/sh
+# rule-mcp:commit-lint - reject a commit or push that is not type(scope): subject.
+dir="$(dirname "$0")"
+backup="$dir/pre-push.rule-mcp-backup"
+if command -v rule-mcp >/dev/null 2>&1; then
+  if rule-mcp --version >/dev/null 2>&1; then
+    rule-mcp commit-lint --stdin-push || exit 1
+  else
+    echo "rule-mcp:commit-lint: rule-mcp exists but cannot run; commit validation skipped - run: rule-mcp setup" >&2
+    mkdir -p "C:\\Users\\user\\.rule-mcp\\state" 2>/dev/null
+    printf '%s pre-push: rule-mcp exists but cannot run\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "C:\\Users\\user\\.rule-mcp\\state\\launcher-skips.log" 2>/dev/null
+  fi
+else
+    echo "rule-mcp:commit-lint: rule-mcp is not on PATH; commit validation skipped - run: rule-mcp setup" >&2
+    mkdir -p "C:\\Users\\user\\.rule-mcp\\state" 2>/dev/null
+    printf '%s pre-push: rule-mcp is not on PATH\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "C:\\Users\\user\\.rule-mcp\\state\\launcher-skips.log" 2>/dev/null
+fi
+if [ -x "$backup" ]; then
+  exec "$backup" "$@"
+fi
+exit 0

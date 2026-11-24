@@ -173,6 +173,38 @@ tbody tr:last-child td {
   background: #fef3c7;
 }
 
+/* ─── Invoice status and origin badges ─── */
+[data-part="badge"][data-kind="bozza"] {
+  color: #525252;
+  background: #e5e5e5;
+}
+
+[data-part="badge"][data-kind="emessa"],
+[data-part="badge"][data-kind="interna"] {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+[data-part="badge"][data-kind="inviata"] {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+[data-part="badge"][data-kind="pagata"] {
+  color: #166534;
+  background: #dcfce7;
+}
+
+[data-part="badge"][data-kind="annullata"] {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+[data-part="badge"][data-kind="esterna"] {
+  color: #92400e;
+  background: #fef3c7;
+}
+
 /* ─── Page header ─── */
 header[data-part="page-header"] {
   display: flex;

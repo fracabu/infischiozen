@@ -12,6 +12,7 @@ import { useClientiStore } from '../../stores/clienti'
 import { useFattureStore } from '../../stores/fatture'
 import { clientSchema, emptyClient } from '../../lib/clientSchema'
 import { formatEuro, formatData } from '../../lib/format'
+import { invoiceNumber } from '../../lib/displayNames'
 import './_ClientForm.css'
 
 const route = useRoute()
@@ -134,8 +135,8 @@ function describedBy(field) {
  * @param {object} invoice
  * @returns {string}
  */
-function invoiceNumber(invoice) {
-  return invoice.numero ? `${invoice.numero}/${invoice.anno}` : t('clientForm.purchases.draft')
+function invoiceLabel(invoice) {
+  return invoiceNumber(invoice) || t('clientForm.purchases.draft')
 }
 
 /** Move focus to the first field with an error. */
@@ -245,7 +246,7 @@ const onSubmit = handleSubmit(async (client) => {
           <li v-for="invoice in invoices" :key="invoice.id" data-part="invoice">
             <header>
               <router-link :to="{ name: 'fattura-dettaglio', params: { id: invoice.id } }">
-                {{ invoiceNumber(invoice) }}
+                {{ invoiceLabel(invoice) }}
               </router-link>
               <time :datetime="invoice.data">{{ formatData(invoice.data) }}</time>
               <data :value="invoice.totale">{{ formatEuro(invoice.totale) }}</data>

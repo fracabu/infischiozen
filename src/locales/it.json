@@ -151,5 +151,37 @@
       "required": "Obbligatorio",
       "price": "Prezzo non valido"
     }
+  },
+  "invoiceStatus": {
+    "bozza": "Bozza",
+    "emessa": "Emessa",
+    "inviata": "Inviata",
+    "pagata": "Pagata",
+    "annullata": "Annullata"
+  },
+  "invoiceOrigin": {
+    "interna": "App",
+    "esterna": "Esterna"
+  },
+  "invoices": {
+    "title": "Fatture",
+    "registerExternal": "Registra fattura esterna",
+    "new": "+ Crea fattura",
+    "filtersLabel": "Filtra fatture",
+    "yearLabel": "Anno",
+    "allYears": "Tutti gli anni",
+    "statusLabel": "Stato",
+    "allStatuses": "Tutti gli stati",
+    "listLabel": "Elenco fatture",
+    "column": {
+      "number": "Numero",
+      "date": "Data",
+      "client": "Cliente",
+      "total": "Totale",
+      "status": "Stato",
+      "origin": "Origine"
+    },
+    "noMatch": "Nessuna fattura corrisponde ai filtri.",
+    "noneYet": "Nessuna fattura ancora. Crea la prima fattura."
   }
 }

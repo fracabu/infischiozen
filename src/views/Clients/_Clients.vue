@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useClientiStore } from '../../stores/clienti'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
+import { clientName } from '../../lib/displayNames'
 import './_Clients.css'
 
 const router = useRouter()
@@ -16,22 +17,6 @@ const query = ref('')
 const toDelete = ref(null)
 
 onMounted(() => store.carica())
-
-/**
- * Display name: surname and name for a person, company name otherwise.
- *
- * @param {object} client
- * @returns {string}
- */
-function clientName(client) {
-  const person = `${client.cognome || ''} ${client.nome || ''}`.trim()
-
-  if (client.tipo === 'privato') {
-    return person
-  }
-
-  return client.ragioneSociale || person
-}
 
 const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase()
@@ -60,6 +45,7 @@ async function confirmDelete() {
   await store.elimina(toDelete.value.id)
   toDelete.value = null
 }
+
 </script>
 
 <template>

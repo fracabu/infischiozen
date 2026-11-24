@@ -1,0 +1,61 @@
+/**
+ * FILE: _Invoices.css
+ * USAGE: Styles for the Invoices view (invoice list with filters)
+ * SCOPE: article[data-part="invoices"]
+ */
+
+/* ─── Filters ─── */
+article[data-part="invoices"] search[data-part="filters"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+article[data-part="invoices"] search select {
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* ─── List card ─── */
+article[data-part="invoices"] section[data-part="list"] {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+article[data-part="invoices"] tbody th {
+  padding: 12px;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+article[data-part="invoices"] tbody tr {
+  cursor: pointer;
+}
+
+article[data-part="invoices"] tbody tr:hover {
+  background: var(--color-bg);
+}
+
+article[data-part="invoices"] tbody tr:last-child th {
+  border-bottom: none;
+}
+
+article[data-part="invoices"] [data-align="end"] {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ─── Empty state ─── */
+article[data-part="invoices"] [data-part="empty"] {
+  padding: 60px 20px;
+  color: var(--color-muted);
+  text-align: center;
+}

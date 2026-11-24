@@ -5,53 +5,12 @@
  * Clients get a real 409 (a client with invoices). Products and drafts have no
  * 409 on the server, so the test makes their DELETE fail with page.route.
  */
-import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
+import { it } from '../support/page.js'
+import { createClient, createDraft, createProduct, uniqueName } from '../support/seed.js'
 
-const it = JSON.parse(readFileSync(new URL('../../src/locales/it.json', import.meta.url), 'utf8'))
 const DELETE = it.common.delete
 const SERVER_MESSAGE = 'Errore di prova dal server'
-
-/**
- * @param {string} label - part of the name, so parallel tests do not collide
- * @returns {string}
- */
-const uniqueName = (label) => `${label} ${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
-
-/**
- * Create a private client through the API. No tax code: it has a unique
- * index, and the tests run in parallel.
- *
- * @param {import('@playwright/test').APIRequestContext} request
- * @param {string} surname
- * @returns {Promise<object>} the saved client
- */
-async function createClient(request, surname) {
-  const response = await request.post('/api/clienti', {
-    data: { tipo: 'privato', nome: 'Prova', cognome: surname },
-  })
-
-  expect(response.ok()).toBe(true)
-
-  return response.json()
-}
-
-/**
- * Create a draft invoice for a client through the API.
- *
- * @param {import('@playwright/test').APIRequestContext} request
- * @param {object} client
- * @returns {Promise<object>} the saved draft
- */
-async function createDraft(request, client) {
-  const response = await request.post('/api/fatture', {
-    data: { stato: 'bozza', data: '2026-01-10', clienteId: client.id, righe: [] },
-  })
-
-  expect(response.ok()).toBe(true)
-
-  return response.json()
-}
 
 /**
  * Make every DELETE on a path fail with a server error.
@@ -96,8 +55,7 @@ test('Clients: a client without invoices is deleted with no message', async ({ p
 
 test('Products: a failed delete closes the dialog and shows the message', async ({ page, request }) => {
   const name = uniqueName('Prodotto')
-  const response = await request.post('/api/prodotti', { data: { nome: name, prezzo: 10 } })
-  expect(response.ok()).toBe(true)
+  await createProduct(request, name)
   await failDeletes(page, '**/api/prodotti/*')
 
   await page.goto('/prodotti')

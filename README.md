@@ -108,7 +108,8 @@ parti da `.env.example`)
 | `npm run web` | Solo l'interfaccia Vite |
 | `npm test` | Esegue i test (Vitest) |
 | `npm run test:watch` | Test in modalità watch |
-| `npm run test:e2e` | Test nel browser (Playwright) su un'istanza di prova: porte 3098 e 5174, database vuoto in una cartella temporanea. La prima volta: `npx playwright install chromium` |
+| `npm run test:e2e` | Tutti i test nel browser (Playwright) su un'istanza di prova: porte 3098 e 5174, database vuoto in una cartella temporanea. La prima volta: `npx playwright install chromium` |
+| `npm run test:a11y` | Solo i test di accessibilità (axe-core), sulla stessa istanza di prova |
 | `npm run build` | Build di produzione in `dist/` |
 | `npm run preview` | Anteprima della build |
 | `npm run db:schema` | Applica `db/schema.sql` (serve solo con Neon: in locale lo fa il server all'avvio) |
@@ -201,7 +202,9 @@ src/
     invoiceStatus.js    stati della fattura e passaggi consentiti
   data/defaultSettings.js
 tests/                  test Vitest delle funzioni pure (calcolo, XML, validazioni)
-  e2e/                  test Playwright nel browser
+  a11y/                 test di accessibilità (Playwright + axe-core)
+  e2e/                  test Playwright dei comportamenti
+  support/              dati di prova, controllo axe, testi dell'interfaccia
   playwright.config.js  istanza di prova per i test nel browser
 docs/adr/               decisioni di architettura (ADR)
 eslint.config.mjs       regole di stile del codice
@@ -237,14 +240,15 @@ stile del JavaScript. Per CSS e HTML il modello sono le schermate già migrate.
 ## Stato del progetto
 
 Il codice nasce da un gestionale personale reso generico. In
-[REVIEW.md](REVIEW.md) c'è la revisione completa: 24 bug corretti e i problemi
+[REVIEW.md](REVIEW.md) c'è la revisione completa: 26 bug corretti e i problemi
 noti ancora aperti. In breve:
 
 - ✅ build di produzione provata;
 - ✅ **106 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
   XML FatturaPA, validazioni di CF/P.IVA e schede cliente, prodotto e impostazioni, compresi i bug già corretti;
-- ✅ **4 test nel browser** (`npm run test:e2e`): un'eliminazione rifiutata dal
-  server chiude la conferma e mostra il messaggio (bug #24);
+- ✅ **31 test nel browser** (`npm run test:e2e`): 27 di accessibilità con
+  axe-core su tutte le schermate (struttura, form con errori, tastiera e focus,
+  componenti) e 4 sulle eliminazioni rifiutate dal server (bug #24);
 - ✅ API provate su un database vuoto: clienti, bozze, numerazione, ordine
   delle date, fatture esterne, PDF allegati, annullamento;
 - ⏳ XML **non ancora passato** dal validatore ufficiale FatturaPA;

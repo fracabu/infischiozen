@@ -6,13 +6,16 @@
  */
 
 /* ─── Links ─── */
+/* The accent green has no text contrast on a light background: the link
+   keeps the text color and the underline tells it apart. */
 article[data-part="external-invoice-form"] a {
   font-weight: 600;
-  color: var(--color-accent-strong);
+  color: inherit;
+  text-decoration: underline;
 }
 
 article[data-part="external-invoice-form"] a:hover {
-  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 /* ─── Lines error, outside a field ─── */

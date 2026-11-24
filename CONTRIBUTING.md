@@ -86,7 +86,8 @@ guarda `src/views/Clients/` e `src/views/ClientForm/`.
 ```bash
 npm test             # una volta
 npm run test:watch   # mentre lavori
-npm run test:e2e     # nel browser, con Playwright
+npm run test:e2e     # nel browser, con Playwright (accessibilità compresa)
+npm run test:a11y    # solo i test di accessibilità
 ```
 
 - I test Vitest sono i file `*.test.js`; i test Playwright sono i file
@@ -95,7 +96,10 @@ npm run test:e2e     # nel browser, con Playwright
   tocca mai i dati in `dati/`.
 - Un bug che si vede solo nell'interfaccia si riproduce con un test Playwright
   in `tests/e2e/`.
-
+- Una schermata nuova entra nei test di accessibilità: aggiungi il suo
+  percorso in `tests/a11y/_basic.spec.js` e, se ha un form, in
+  `tests/a11y/_forms.spec.js`. I dati di prova si creano con
+  `tests/support/seed.js`.
 - Ogni correzione di un bug porta con sé un test che lo riproduce: nei test
   attuali i casi dei bug di `REVIEW.md` sono segnati con il loro numero.
 - Ogni regola fiscale nuova porta con sé un test con i numeri: soglie, casi

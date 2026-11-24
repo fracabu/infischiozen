@@ -5,9 +5,10 @@ abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
 Stato: **verificato con `vite build`, con 106 test Vitest sulle funzioni pure,
-con 4 test Playwright nel browser e con una prova di tutte le API su un
-database PGlite nuovo e vuoto** (23 controlli). Quella prova ha trovato il bug
-#18.
+con 31 test Playwright nel browser (27 di accessibilità con axe-core) e con una
+prova di tutte le API su un database PGlite nuovo e vuoto** (23 controlli).
+Quella prova ha trovato il bug #18. I test di accessibilità hanno trovato i bug
+#25 e #26.
 
 ## Bug corretti
 
@@ -37,6 +38,8 @@ database PGlite nuovo e vuoto** (23 controlli). Quella prova ha trovato il bug
 | 22 | Impostazioni | I campi soglia e importo del bollo e % rivalsa non avevano controlli: un campo svuotato si salvava vuoto | Con la soglia vuota, una fattura da 50 € prendeva **2 € di bollo**, dovuto solo sopra 77,47 € | Schema zod: con l'opzione attiva, importi obbligatori e di 0 o più, percentuale da 0 a 100 |
 | 23 | Avvio | Al primo avvio la Dashboard doveva portare alle Impostazioni, ma il controllo leggeva la rotta prima che il router la risolvesse | Con i dati del cedente mai confermati, l'app restava sulla Dashboard, senza benvenuto | `App.vue` aspetta `router.isReady()` prima del controllo |
 | 24 | Clienti, Prodotti, Dettaglio fattura | L'eliminazione non gestiva l'errore del server: il 409 di un cliente con fatture, o un server spento | **La conferma restava aperta senza nessun messaggio**, e cliccare di nuovo non cambiava niente | La conferma si chiude e compare il messaggio del server. Test Playwright in `tests/e2e/_delete-errors.spec.js` |
+| 25 | Nuova fattura e fattura esterna | I link erano nel verde del marchio (`#a8d418`) su fondo chiaro | Contrasto sotto 4.5:1: il link "crea cliente" dell'avviso senza clienti era **quasi illeggibile** (WCAG 1.4.3) | Il link prende il colore del testo intorno ed è sottolineato. Test in `tests/a11y/_basic.spec.js` con la lista clienti forzata vuota |
+| 26 | Finestra di conferma | La vista smonta il `<dialog>` invece di chiuderlo, e il browser non rimette il focus | Dopo Esc o Annulla il focus finiva sulla pagina: **con la tastiera si ripartiva dall'inizio** (WCAG 2.4.3) | `ConfirmDialog` ricorda chi aveva il focus all'apertura e glielo rende quando si smonta. Test in `tests/a11y/_navigation.spec.js` |
 
 ## Cose tolte perché legate al progetto d'origine
 
@@ -64,7 +67,11 @@ database PGlite nuovo e vuoto** (23 controlli). Quella prova ha trovato il bug
   validazioni di CF/P.IVA e gli schemi dei form hanno 106 test Vitest
   (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20, #21 e #22. Server e query non hanno ancora test: servono un database
   di prova. I test Playwright (`npm run test:e2e`) partono già su un database
-  di prova, ma oggi provano solo le eliminazioni rifiutate (bug #24).
+  di prova, ma oggi provano l'accessibilità e le eliminazioni rifiutate (bug
+  #24), non le regole fiscali del server.
+- **Accessibilità oltre axe**: un controllo automatico non vede tutto (ordine
+  di lettura, testi che hanno senso solo a vista). Mancano una prova con un
+  lettore di schermo (NVDA) e una prova di zoom al 200%.
 - **Bundle**: `FatturaDettaglio` pesa 2,2 MB perché include pdfmake con i
   font. Si può caricare pdfmake solo quando si genera il PDF (`import()`).
 - **XML da validare**: il tracciato va provato con il validatore ufficiale

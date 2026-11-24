@@ -42,5 +42,65 @@
     "noneYet": "Nessun cliente ancora. Aggiungi il primo cliente per iniziare.",
     "deleteTitle": "Elimina cliente",
     "deleteMessage": "Eliminare definitivamente «{name}»? Le fatture già emesse non verranno modificate."
+  },
+  "clientForm": {
+    "titleNew": "Nuovo cliente",
+    "titleEdit": "Modifica cliente",
+    "save": "Salva cliente",
+    "saving": "Salvataggio...",
+    "invalid": "Correggi i campi evidenziati prima di salvare.",
+    "required": "obbligatorio",
+    "section": {
+      "type": "Tipo cliente",
+      "identity": "Dati anagrafici e fiscali",
+      "address": "Sede",
+      "einvoice": "Fatturazione elettronica",
+      "purchases": "Acquisti del cliente"
+    },
+    "typeOption": {
+      "privato": "Privato (persona fisica)",
+      "azienda": "Azienda / Ditta",
+      "pa": "Pubblica Amministrazione"
+    },
+    "field": {
+      "type": "Tipologia",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "taxCode": "Codice fiscale",
+      "taxCodeOptional": "Codice fiscale (se diverso)",
+      "companyName": "Ragione sociale",
+      "vatNumber": "Partita IVA",
+      "address": "Indirizzo",
+      "postalCode": "CAP",
+      "city": "Città",
+      "province": "Provincia",
+      "country": "Nazione",
+      "recipientCode": "Codice destinatario SdI",
+      "pec": "PEC",
+      "email": "Email",
+      "phone": "Telefono",
+      "notes": "Note"
+    },
+    "hint": {
+      "province": "Sigla, es. RM",
+      "country": "Codice ISO, es. IT. Per un cliente estero usa il suo codice.",
+      "recipientCode": "7 caratteri. 0000000 se il cliente non ha un codice. XXXXXXX per un cliente estero."
+    },
+    "error": {
+      "required": "Obbligatorio",
+      "taxCode": "Codice fiscale non valido",
+      "vatNumber": "Partita IVA non valida (11 cifre)",
+      "postalCode": "CAP non valido (5 cifre)",
+      "province": "Sigla provincia (2 lettere)",
+      "recipientCode": "Deve avere 7 caratteri (0000000 se assente)",
+      "pec": "PEC non valida",
+      "email": "Email non valida"
+    },
+    "purchases": {
+      "none": "Nessuna fattura registrata per questo cliente.",
+      "summary": "{count} fattura · totale documenti {total} | {count} fatture · totale documenti {total}",
+      "draft": "Bozza",
+      "line": "{quantity} × {price}"
+    }
   }
 }

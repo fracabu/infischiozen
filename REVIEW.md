@@ -4,7 +4,7 @@ Questo progetto nasce da un gestionale personale. Prima di renderlo generico ne
 abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
-Stato: **verificato con `vite build`, con 43 test Vitest sulle funzioni pure e
+Stato: **verificato con `vite build`, con 54 test Vitest sulle funzioni pure e
 con una prova di tutte le API su un database PGlite nuovo e vuoto** (23
 controlli). Quella prova ha trovato il bug #18.
 
@@ -30,6 +30,7 @@ controlli). Quella prova ha trovato il bug #18.
 | 16 | Impostazioni | La dicitura di legge non aveva limite | Oltre i 100 caratteri di `RiferimentoNormativo` lo SdI scarta la fattura | Controllo sia in Impostazioni sia prima di generare l'XML |
 | 17 | server | Un numero già usato produceva un 500 generico | Messaggio incomprensibile | Risposta 409 con la spiegazione |
 | 18 | `POST /api/fatture` (esterne) | La query della correzione #7 usava `$1` sia come intero (`numero`) sia come testo (`$1 \|\| '/'`) | **Registrare una fattura esterna dava sempre 500** (`inconsistent types deduced for parameter $1`), su PGlite come su Neon | Cast espliciti `$1::int::text` |
+| 19 | Scheda cliente | Con codice destinatario `0000000` pretendeva la PEC: lo stesso errore del #2, rimasto nel form | **Un privato senza PEC non si poteva salvare** | Schema zod in `src/lib/clientSchema.js`: `0000000` senza PEC è valido. La PEC si controlla solo se c'è |
 
 ## Cose tolte perché legate al progetto d'origine
 
@@ -54,8 +55,8 @@ controlli). Quella prova ha trovato il bug #18.
 - **Nessuna autenticazione sulle API**: oggi va bene perché il server ascolta
   solo su 127.0.0.1. Prima di metterlo online serve un login.
 - **Test solo sulle funzioni pure**: `calcoloFattura`, `generaXml` e le
-  validazioni di CF/P.IVA hanno 43 test Vitest (`npm test`), compresi i bug
-  #2, #3, #5 e #16. Server e query non hanno ancora test: servono un database
+  validazioni di CF/P.IVA e lo schema del cliente hanno 54 test Vitest
+  (`npm test`), compresi i bug #2, #3, #5, #16 e #19. Server e query non hanno ancora test: servono un database
   di prova.
 - **Bundle**: `FatturaDettaglio` pesa 2,2 MB perché include pdfmake con i
   font. Si può caricare pdfmake solo quando si genera il PDF (`import()`).

@@ -234,8 +234,8 @@ Il codice nasce da un gestionale personale reso generico. In
 noti ancora aperti. In breve:
 
 - ✅ build di produzione provata;
-- ✅ **54 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
-  XML FatturaPA, validazioni di CF/P.IVA e scheda cliente, compresi i bug già corretti;
+- ✅ **60 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
+  XML FatturaPA, validazioni di CF/P.IVA e schede cliente e prodotto, compresi i bug già corretti;
 - ✅ API provate su un database vuoto: clienti, bozze, numerazione, ordine
   delle date, fatture esterne, PDF allegati, annullamento;
 - ⏳ XML **non ancora passato** dal validatore ufficiale FatturaPA;

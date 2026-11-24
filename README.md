@@ -195,6 +195,7 @@ src/
     clientSchema.js     validazione della scheda cliente (zod)
     productSchema.js    validazione della scheda prodotto (zod)
     displayNames.js     nome del cliente e numero fattura per le viste
+    invoiceDraft.js     wizard della nuova fattura: regole e documento
   data/impostazioniDefault.js
 tests/                  test Vitest delle funzioni pure (calcolo, XML, validazioni)
 docs/adr/               decisioni di architettura (ADR)
@@ -231,11 +232,11 @@ stile del JavaScript. Per CSS e HTML il modello sono le schermate già migrate.
 ## Stato del progetto
 
 Il codice nasce da un gestionale personale reso generico. In
-[REVIEW.md](REVIEW.md) c'è la revisione completa: 19 bug corretti e i problemi
+[REVIEW.md](REVIEW.md) c'è la revisione completa: 20 bug corretti e i problemi
 noti ancora aperti. In breve:
 
 - ✅ build di produzione provata;
-- ✅ **66 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
+- ✅ **76 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
   XML FatturaPA, validazioni di CF/P.IVA e schede cliente e prodotto, compresi i bug già corretti;
 - ✅ API provate su un database vuoto: clienti, bozze, numerazione, ordine
   delle date, fatture esterne, PDF allegati, annullamento;

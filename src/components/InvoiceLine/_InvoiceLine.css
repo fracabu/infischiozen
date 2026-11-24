@@ -1,0 +1,30 @@
+/**
+ * FILE: _InvoiceLine.css
+ * USAGE: Styles for the InvoiceLine component (one editable table row)
+ * SCOPE: tr[data-part="invoice-line"]
+ */
+
+/* ─── Cells ─── */
+tr[data-part="invoice-line"] td {
+  padding: 8px 4px;
+  vertical-align: middle;
+}
+
+/* ─── Inputs ─── */
+tr[data-part="invoice-line"] input,
+tr[data-part="invoice-line"] select {
+  width: 100%;
+  padding: 7px 9px;
+  font-family: inherit;
+  font-size: 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+}
+
+/* ─── Line total ─── */
+tr[data-part="invoice-line"] [data-part="total"] {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}

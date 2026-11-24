@@ -183,5 +183,69 @@
     },
     "noMatch": "Nessuna fattura corrisponde ai filtri.",
     "noneYet": "Nessuna fattura ancora. Crea la prima fattura."
+  },
+  "invoiceTotals": {
+    "label": "Riepilogo importi",
+    "taxable": "Imponibile",
+    "services": "Totale prestazioni",
+    "rivalsa": "Rivalsa INPS",
+    "rivalsaPercent": "Rivalsa {percent}% GS INPS",
+    "stamp": "Marca da bollo",
+    "total": "Totale",
+    "documentTotal": "Totale documento"
+  },
+  "invoiceLine": {
+    "product": "Prodotto a catalogo",
+    "freeLine": "- Riga libera -",
+    "description": "Descrizione",
+    "quantity": "Q.tà",
+    "unitPrice": "Prezzo unit.",
+    "total": "Totale",
+    "fieldLabel": "{field}, riga {line}",
+    "remove": "Rimuovi la riga {line}"
+  },
+  "paymentMethod": {
+    "Bonifico": "Bonifico",
+    "PayPal": "PayPal",
+    "Contanti": "Contanti",
+    "Altro": "Altro"
+  },
+  "invoiceForm": {
+    "title": "Nuova fattura",
+    "stepsLabel": "Passi della fattura",
+    "step": {
+      "client": "1. Cliente",
+      "lines": "2. Righe",
+      "summary": "3. Riepilogo"
+    },
+    "clientTitle": "Seleziona il cliente",
+    "client": "Cliente",
+    "required": "obbligatorio",
+    "choose": "- Seleziona -",
+    "noClients": "Nessun cliente in anagrafica.",
+    "createClient": "Crea un cliente",
+    "newClient": "+ Nuovo cliente",
+    "vatNumber": "P.IVA: {value}",
+    "taxCode": "C.F.: {value}",
+    "linesTitle": "Righe della fattura",
+    "addLine": "+ Aggiungi riga",
+    "documentTitle": "Dati documento",
+    "date": "Data fattura",
+    "payment": "Modalità di pagamento",
+    "dueDate": "Scadenza pagamento",
+    "rivalsa": "Rivalsa INPS",
+    "applyRivalsa": "Applica rivalsa {percent}% GS INPS",
+    "notes": "Note",
+    "notesPlaceholder": "Note aggiuntive (facoltative)",
+    "back": "← Indietro",
+    "next": "Avanti →",
+    "saveDraft": "Salva bozza",
+    "issue": "Emetti fattura",
+    "saving": "Salvataggio...",
+    "error": {
+      "client": "Seleziona un cliente per proseguire.",
+      "lines": "Aggiungi almeno una riga con descrizione.",
+      "date": "Inserisci la data della fattura."
+    }
   }
 }

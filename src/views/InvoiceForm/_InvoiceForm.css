@@ -1,0 +1,91 @@
+/**
+ * FILE: _InvoiceForm.css
+ * USAGE: Styles for the InvoiceForm view (new invoice wizard). Fields, cards,
+ *        alert and actions come from src/styles/base.css.
+ * SCOPE: article[data-part="invoice-form"]
+ */
+
+/* ─── Step indicator ─── */
+article[data-part="invoice-form"] ol[data-part="steps"] {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  list-style: none;
+}
+
+article[data-part="invoice-form"] ol[data-part="steps"] li {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+article[data-part="invoice-form"] ol[data-part="steps"] li[data-state="done"] {
+  color: var(--color-ink);
+}
+
+article[data-part="invoice-form"] ol[data-part="steps"] li[aria-current="step"] {
+  color: var(--color-ink);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ─── Card titles ─── */
+article[data-part="invoice-form"] section[data-part="card"] {
+  flex-direction: column;
+}
+
+article[data-part="invoice-form"] section[data-part="card"] > h2 {
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ─── Step 1: client ─── */
+article[data-part="invoice-form"] [data-part="notice"] {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+}
+
+article[data-part="invoice-form"] a {
+  font-weight: 600;
+  color: var(--color-accent-strong);
+}
+
+article[data-part="invoice-form"] a:hover {
+  text-decoration: underline;
+}
+
+article[data-part="invoice-form"] [data-part="client-card"] {
+  padding: 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+article[data-part="invoice-form"] [data-part="client-card"] small {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* ─── Step 2 and 3: tables ─── */
+article[data-part="invoice-form"] table[data-part="lines"] {
+  margin-bottom: 12px;
+}
+
+article[data-part="invoice-form"] table[data-part="lines"] th {
+  padding: 0 4px 6px;
+}
+
+article[data-part="invoice-form"] [data-align="end"] {
+  text-align: right;
+  white-space: nowrap;
+}

@@ -27,7 +27,7 @@ const routes = [
   { path: '/fatture/nuova', name: 'fattura-nuova', component: lazy(() => import('../views/InvoiceForm'), 'InvoiceForm') },
   { path: '/fatture/registra', name: 'fattura-registra', component: lazy(() => import('../views/ExternalInvoiceForm'), 'ExternalInvoiceForm') },
   { path: '/fatture/:id', name: 'fattura-dettaglio', component: lazy(() => import('../views/InvoiceDetail'), 'InvoiceDetail') },
-  { path: '/impostazioni', name: 'impostazioni', component: () => import('../views/Impostazioni.vue') }
+  { path: '/impostazioni', name: 'impostazioni', component: lazy(() => import('../views/Settings'), 'Settings') }
 ]
 
 const router = createRouter({

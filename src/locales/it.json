@@ -324,5 +324,86 @@
     "percent": "{value}%",
     "recentTitle": "Ultime fatture",
     "noneYet": "Nessuna fattura ancora. Crea la prima fattura per iniziare."
+  },
+  "settingsForm": {
+    "title": "Impostazioni",
+    "save": "Salva impostazioni",
+    "saving": "Salvataggio...",
+    "loading": "Caricamento...",
+    "welcome": "Benvenuto! Questi sono i dati del tuo profilo cedente, già precompilati. Verificali e premi {button} per iniziare.",
+    "saved": "Impostazioni salvate correttamente.",
+    "invalid": "Correggi i campi evidenziati prima di salvare.",
+    "required": "Obbligatorio",
+    "section": {
+      "identity": "Dati anagrafici cedente/prestatore",
+      "address": "Sede",
+      "contacts": "Contatti e pagamenti",
+      "tax": "Regime fiscale e previdenziale",
+      "numbering": "Numerazione fatture",
+      "logo": "Logo per il PDF"
+    },
+    "field": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "companyName": "Ragione sociale / Ditta",
+      "vatNumber": "Partita IVA",
+      "taxCode": "Codice fiscale",
+      "address": "Indirizzo",
+      "postalCode": "CAP",
+      "city": "Città",
+      "province": "Provincia",
+      "country": "Nazione",
+      "email": "Email",
+      "pec": "PEC",
+      "phone": "Telefono",
+      "iban": "IBAN",
+      "ibanHolder": "Intestatario IBAN",
+      "bank": "Banca",
+      "taxRegime": "Regime fiscale",
+      "pensionScheme": "Regime previdenziale",
+      "legalText": "Dicitura di legge in fattura",
+      "rivalsa": "Rivalsa INPS",
+      "rivalsaPercent": "% Rivalsa INPS",
+      "grossPrices": "Prezzi di listino",
+      "stampDuty": "Marca da bollo",
+      "stampDutyToClient": "Bollo al cliente",
+      "stampDutyThreshold": "Soglia bollo (€)",
+      "stampDutyAmount": "Importo bollo (€)",
+      "stampDutyText": "Dicitura bollo in fattura"
+    },
+    "checkbox": {
+      "rivalsa": "Applica rivalsa INPS in fattura",
+      "grossPrices": "I prezzi sono già comprensivi di rivalsa (la rivalsa si scorpora invece di aggiungersi)",
+      "stampDuty": "Applica marca da bollo",
+      "stampDutyToClient": "Addebita il bollo al cliente in fattura"
+    },
+    "hint": {
+      "province": "Sigla, es. RM",
+      "country": "Codice ISO, es. IT",
+      "counter": "{count} di {max} caratteri"
+    },
+    "taxRegime": {
+      "RF19": "RF19 - Regime forfettario"
+    },
+    "error": {
+      "required": "Obbligatorio",
+      "vatNumber": "Partita IVA non valida (11 cifre)",
+      "taxCode": "Codice fiscale non valido",
+      "postalCode": "CAP non valido (5 cifre)",
+      "province": "Sigla provincia (2 lettere)",
+      "email": "Email non valida",
+      "pec": "PEC non valida",
+      "legalText": "Massimo {max} caratteri: oltre, lo SdI scarta la fattura",
+      "percent": "Inserisci una percentuale da 0 a 100",
+      "amount": "Inserisci un importo di 0 o più"
+    },
+    "nextNumber": "Prossimo numero fattura",
+    "numberingNote": "Il numero lo assegna il database al momento dell'emissione: è l'ultima fattura dell'anno più uno, e non si imposta a mano. Se hai già emesso fatture con un altro software, registrale da {path} con il loro numero: l'app ripartirà dal successivo.",
+    "externalPath": "Fatture → Registra fattura esterna",
+    "logoAlt": "Logo attuale per il PDF",
+    "noLogo": "Nessun logo personalizzato caricato: il PDF mostrerà il tuo nome o la tua ditta come intestazione.",
+    "uploadLogo": "Carica logo",
+    "replaceLogo": "Sostituisci logo",
+    "removeLogo": "Rimuovi logo"
   }
 }

@@ -4,7 +4,7 @@ Questo progetto nasce da un gestionale personale. Prima di renderlo generico ne
 abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
-Stato: **verificato con `vite build`, con 98 test Vitest sulle funzioni pure e
+Stato: **verificato con `vite build`, con 106 test Vitest sulle funzioni pure e
 con una prova di tutte le API su un database PGlite nuovo e vuoto** (23
 controlli). Quella prova ha trovato il bug #18.
 
@@ -33,6 +33,8 @@ controlli). Quella prova ha trovato il bug #18.
 | 19 | Scheda cliente | Con codice destinatario `0000000` pretendeva la PEC: lo stesso errore del #2, rimasto nel form | **Un privato senza PEC non si poteva salvare** | Schema zod in `src/lib/clientSchema.js`: `0000000` senza PEC è valido. La PEC si controlla solo se c'è |
 | 20 | Nuova fattura e fattura esterna | Una riga con prezzo ma senza descrizione entrava negli importi, ma non veniva salvata fra le righe | **Totale della fattura diverso dalla somma delle sue righe**, anche nell'XML | Gli importi si calcolano solo sulle righe salvate (`buildInvoice` in `src/lib/invoiceDraft.js`), in tutte e due le schermate |
 | 21 | Fattura esterna | Il form chiedeva l'anno, ma dopo la correzione #10 il server lo prende dalla data | Registrando la 7/2025 con una data del 2026 si salvava la **7/2026**, senza avviso | Campo Anno tolto. Il form mostra il numero che risulterà, con l'anno preso dalla data |
+| 22 | Impostazioni | I campi soglia e importo del bollo e % rivalsa non avevano controlli: un campo svuotato si salvava vuoto | Con la soglia vuota, una fattura da 50 € prendeva **2 € di bollo**, dovuto solo sopra 77,47 € | Schema zod: con l'opzione attiva, importi obbligatori e di 0 o più, percentuale da 0 a 100 |
+| 23 | Avvio | Al primo avvio la Dashboard doveva portare alle Impostazioni, ma il controllo leggeva la rotta prima che il router la risolvesse | Con i dati del cedente mai confermati, l'app restava sulla Dashboard, senza benvenuto | `App.vue` aspetta `router.isReady()` prima del controllo |
 
 ## Cose tolte perché legate al progetto d'origine
 
@@ -57,8 +59,8 @@ controlli). Quella prova ha trovato il bug #18.
 - **Nessuna autenticazione sulle API**: oggi va bene perché il server ascolta
   solo su 127.0.0.1. Prima di metterlo online serve un login.
 - **Test solo sulle funzioni pure**: `calcoloFattura`, `generaXml` e le
-  validazioni di CF/P.IVA e gli schemi dei form hanno 98 test Vitest
-  (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20 e #21. Server e query non hanno ancora test: servono un database
+  validazioni di CF/P.IVA e gli schemi dei form hanno 106 test Vitest
+  (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20, #21 e #22. Server e query non hanno ancora test: servono un database
   di prova.
 - **Bundle**: `FatturaDettaglio` pesa 2,2 MB perché include pdfmake con i
   font. Si può caricare pdfmake solo quando si genera il PDF (`import()`).

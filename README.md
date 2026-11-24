@@ -234,12 +234,12 @@ stile del JavaScript. Per CSS e HTML il modello sono le schermate già migrate.
 ## Stato del progetto
 
 Il codice nasce da un gestionale personale reso generico. In
-[REVIEW.md](REVIEW.md) c'è la revisione completa: 21 bug corretti e i problemi
+[REVIEW.md](REVIEW.md) c'è la revisione completa: 23 bug corretti e i problemi
 noti ancora aperti. In breve:
 
 - ✅ build di produzione provata;
-- ✅ **98 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
-  XML FatturaPA, validazioni di CF/P.IVA e schede cliente e prodotto, compresi i bug già corretti;
+- ✅ **106 test automatici** (`npm test`) su calcolo fattura, rivalsa, bollo,
+  XML FatturaPA, validazioni di CF/P.IVA e schede cliente, prodotto e impostazioni, compresi i bug già corretti;
 - ✅ API provate su un database vuoto: clienti, bozze, numerazione, ordine
   delle date, fatture esterne, PDF allegati, annullamento;
 - ⏳ XML **non ancora passato** dal validatore ufficiale FatturaPA;

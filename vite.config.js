@@ -13,6 +13,10 @@ export default defineConfig({
       template: { compilerOptions: { isCustomElement: (tag) => tag === 'search' } },
     }),
   ],
+  // Vitest runs the unit tests only: the *.spec.js files are Playwright tests.
+  test: {
+    include: ['tests/**/*.test.js'],
+  },
   server: {
     port: Number(process.env.PORTA_WEB || 5173),
     open: !process.env.CI && !process.env.PORTA_WEB,

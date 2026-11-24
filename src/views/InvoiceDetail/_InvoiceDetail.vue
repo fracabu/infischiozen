@@ -156,9 +156,20 @@ async function attachPdf(event) {
   }
 }
 
+/**
+ * Delete the draft, then go back to the list. When the server fails, close
+ * the dialog and stay on the draft with the message.
+ */
 async function deleteDraft() {
-  await invoiceStore.remove(invoice.value.id)
-  router.push({ name: 'fatture' })
+  confirmDelete.value = false
+  message.value = ''
+
+  try {
+    await invoiceStore.remove(invoice.value.id)
+    router.push({ name: 'fatture' })
+  } catch (error) {
+    showError(error)
+  }
 }
 
 </script>

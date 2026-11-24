@@ -15,6 +15,7 @@ const { t } = useI18n()
 const store = useClientsStore()
 const query = ref('')
 const toDelete = ref(null)
+const deleteError = ref('')
 
 onMounted(() => store.load())
 
@@ -41,9 +42,20 @@ function openClient(client) {
   router.push({ name: 'cliente-modifica', params: { id: client.id } })
 }
 
+/**
+ * Delete the client in the dialog. The server refuses a client with invoices
+ * (409): close the dialog and show its message.
+ */
 async function confirmDelete() {
-  await store.remove(toDelete.value.id)
+  const { id } = toDelete.value
   toDelete.value = null
+  deleteError.value = ''
+
+  try {
+    await store.remove(id)
+  } catch (error) {
+    deleteError.value = error instanceof Error ? error.message : String(error)
+  }
 }
 
 </script>
@@ -56,6 +68,10 @@ async function confirmDelete() {
         {{ t('clients.new') }}
       </button>
     </header>
+
+    <p v-if="deleteError" role="alert" data-part="alert">
+      {{ deleteError }}
+    </p>
 
     <search data-part="search">
       <label for="clients-search" data-visually-hidden>{{ t('clients.searchLabel') }}</label>

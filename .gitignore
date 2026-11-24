@@ -17,3 +17,7 @@ yarn-error.log*
 
 # database locale (PGlite)
 dati/
+
+# risultati dei test Playwright
+test-results/
+playwright-report/

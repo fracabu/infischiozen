@@ -4,9 +4,10 @@ Questo progetto nasce da un gestionale personale. Prima di renderlo generico ne
 abbiamo rivisto il codice. Qui c'è cosa abbiamo trovato e cosa è già stato
 corretto in questa versione, così chi ci lavora sa da dove si parte.
 
-Stato: **verificato con `vite build`, con 106 test Vitest sulle funzioni pure e
-con una prova di tutte le API su un database PGlite nuovo e vuoto** (23
-controlli). Quella prova ha trovato il bug #18.
+Stato: **verificato con `vite build`, con 106 test Vitest sulle funzioni pure,
+con 4 test Playwright nel browser e con una prova di tutte le API su un
+database PGlite nuovo e vuoto** (23 controlli). Quella prova ha trovato il bug
+#18.
 
 ## Bug corretti
 
@@ -35,6 +36,7 @@ controlli). Quella prova ha trovato il bug #18.
 | 21 | Fattura esterna | Il form chiedeva l'anno, ma dopo la correzione #10 il server lo prende dalla data | Registrando la 7/2025 con una data del 2026 si salvava la **7/2026**, senza avviso | Campo Anno tolto. Il form mostra il numero che risulterà, con l'anno preso dalla data |
 | 22 | Impostazioni | I campi soglia e importo del bollo e % rivalsa non avevano controlli: un campo svuotato si salvava vuoto | Con la soglia vuota, una fattura da 50 € prendeva **2 € di bollo**, dovuto solo sopra 77,47 € | Schema zod: con l'opzione attiva, importi obbligatori e di 0 o più, percentuale da 0 a 100 |
 | 23 | Avvio | Al primo avvio la Dashboard doveva portare alle Impostazioni, ma il controllo leggeva la rotta prima che il router la risolvesse | Con i dati del cedente mai confermati, l'app restava sulla Dashboard, senza benvenuto | `App.vue` aspetta `router.isReady()` prima del controllo |
+| 24 | Clienti, Prodotti, Dettaglio fattura | L'eliminazione non gestiva l'errore del server: il 409 di un cliente con fatture, o un server spento | **La conferma restava aperta senza nessun messaggio**, e cliccare di nuovo non cambiava niente | La conferma si chiude e compare il messaggio del server. Test Playwright in `tests/e2e/_delete-errors.spec.js` |
 
 ## Cose tolte perché legate al progetto d'origine
 
@@ -61,7 +63,8 @@ controlli). Quella prova ha trovato il bug #18.
 - **Test solo sulle funzioni pure**: `invoiceMath`, `invoiceXml` e le
   validazioni di CF/P.IVA e gli schemi dei form hanno 106 test Vitest
   (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20, #21 e #22. Server e query non hanno ancora test: servono un database
-  di prova.
+  di prova. I test Playwright (`npm run test:e2e`) partono già su un database
+  di prova, ma oggi provano solo le eliminazioni rifiutate (bug #24).
 - **Bundle**: `FatturaDettaglio` pesa 2,2 MB perché include pdfmake con i
   font. Si può caricare pdfmake solo quando si genera il PDF (`import()`).
 - **XML da validare**: il tracciato va provato con il validatore ufficiale

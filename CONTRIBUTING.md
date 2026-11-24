@@ -25,6 +25,8 @@ cd infischiozen
 npm install
 npm run dev      # API su 127.0.0.1:3001 + interfaccia su http://localhost:5173
 npm test         # test Vitest
+npx playwright install chromium   # una volta sola, per i test nel browser
+npm run test:e2e                  # test Playwright su un'istanza di prova
 ```
 
 I dati di sviluppo finiscono in `dati/`. Per ripartire da un database vuoto,
@@ -84,7 +86,15 @@ guarda `src/views/Clients/` e `src/views/ClientForm/`.
 ```bash
 npm test             # una volta
 npm run test:watch   # mentre lavori
+npm run test:e2e     # nel browser, con Playwright
 ```
+
+- I test Vitest sono i file `*.test.js`; i test Playwright sono i file
+  `*.spec.js`. `npm run test:e2e` avvia da solo API e build su un'istanza di
+  prova (porte 3098 e 5174, database vuoto in una cartella temporanea): non
+  tocca mai i dati in `dati/`.
+- Un bug che si vede solo nell'interfaccia si riproduce con un test Playwright
+  in `tests/e2e/`.
 
 - Ogni correzione di un bug porta con sé un test che lo riproduce: nei test
   attuali i casi dei bug di `REVIEW.md` sono segnati con il loro numero.
@@ -98,6 +108,7 @@ npm run test:watch   # mentre lavori
 Prima di aprirla:
 
 - [ ] `npm test` passa
+- [ ] `npm run test:e2e` passa
 - [ ] `npm run build` passa
 - [ ] nessun dato reale né credenziale nel diff
 - [ ] se hai cambiato una regola fiscale, hai aggiornato la tabella *Regole

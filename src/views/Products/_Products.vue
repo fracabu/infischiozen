@@ -17,6 +17,7 @@ const { t } = useI18n()
 const store = useProductsStore()
 const query = ref('')
 const toDelete = ref(null)
+const deleteError = ref('')
 
 onMounted(() => store.load())
 
@@ -66,9 +67,20 @@ async function toggleActive(product) {
   await store.save({ ...product, attivo: !product.attivo })
 }
 
+/**
+ * Delete the product in the dialog. When the server fails, close the dialog
+ * and show its message.
+ */
 async function confirmDelete() {
-  await store.remove(toDelete.value.id)
+  const { id } = toDelete.value
   toDelete.value = null
+  deleteError.value = ''
+
+  try {
+    await store.remove(id)
+  } catch (error) {
+    deleteError.value = error instanceof Error ? error.message : String(error)
+  }
 }
 
 </script>
@@ -81,6 +93,10 @@ async function confirmDelete() {
         {{ t('products.new') }}
       </button>
     </header>
+
+    <p v-if="deleteError" role="alert" data-part="alert">
+      {{ deleteError }}
+    </p>
 
     <search data-part="search">
       <label for="products-search" data-visually-hidden>{{ t('products.searchLabel') }}</label>

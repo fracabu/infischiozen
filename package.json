@@ -13,6 +13,7 @@
     "db:schema": "node scripts/apply-schema.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test -c tests/playwright.config.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
     "@stylistic/eslint-plugin": "6.0.1",
     "@vitejs/plugin-vue": "5.2.4",
     "concurrently": "10.0.5",

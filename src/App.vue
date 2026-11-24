@@ -13,7 +13,8 @@ const router = useRouter()
 const settings = useImpostazioniStore()
 
 onMounted(async () => {
-  await settings.carica()
+  // The first navigation loads its page lazily: wait for it, or the route has no name yet.
+  await Promise.all([settings.carica(), router.isReady()])
 
   if (settings.primoAvvio && router.currentRoute.value.name === 'dashboard') {
     router.replace({ name: 'impostazioni', query: { benvenuto: '1' } })

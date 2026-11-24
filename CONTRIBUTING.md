@@ -68,10 +68,10 @@ guarda `src/views/Clients/` e `src/views/ClientForm/`.
 - **`npm run lint` deve passare** sui file che tocchi.
 - **Una decisione di architettura va in un'ADR** in `docs/adr/`.
 - **I commenti spiegano il perché**, non il cosa. Quando una regola viene da una
-  norma o da un vincolo FatturaPA, scrivilo (vedi `calcoloFattura.js` e
-  `generaXml.js`).
+  norma o da un vincolo FatturaPA, scrivilo (vedi `invoiceMath.js` e
+  `invoiceXml.js`).
 - **Le date sono testo `YYYY-MM-DD`**, mai oggetti `Date`: vedi la nota in
-  `server/mappa.mjs`. Una data fiscale spostata di un giorno è un errore vero.
+  `server/mapping.mjs`. Una data fiscale spostata di un giorno è un errore vero.
 - **Il calcolo sta in funzioni pure** in `src/lib/`, senza dipendenze da Vue o
   dal database, così si testa da solo.
 - **Le query usano sempre parametri** (`$1`, oppure il template `` sql`...` ``),

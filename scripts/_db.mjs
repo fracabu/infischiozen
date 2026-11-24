@@ -1,29 +1,33 @@
-// ============================================================================
-// Connessione al database. Due modalità, stessa interfaccia per il server:
-//
-//   1. LOCALE (predefinita) — PGlite: Postgres che gira dentro Node e salva i
-//      dati nella cartella `dati/` del progetto (esclusa da git). Niente
-//      account, niente cloud: i dati fiscali restano sul tuo computer.
-//   2. NEON — se è impostata DATABASE_URL (o POSTGRES_URL), nell'ambiente o in
-//      .env.local. Il driver HTTP di Neon funziona solo con Neon.
-//
-// In entrambi i casi `connetti()` restituisce un client con:
-//   sql`... ${valore} ...`      -> array di righe
-//   sql.query(testo, parametri) -> array di righe
-// e gli errori di Postgres conservano `code` (es. 23505 = indice unico).
-// ============================================================================
+/**
+ * @module scripts/_db
+ * Database connection. Two modes, one interface for the server:
+ *
+ *   1. LOCAL (default): PGlite, a Postgres that runs inside Node and saves the
+ *      data in the project folder `dati/` (excluded from git). No account, no
+ *      cloud: the fiscal data stays on your computer.
+ *   2. NEON: when DATABASE_URL (or POSTGRES_URL) is set, in the environment or
+ *      in .env.local. The Neon HTTP driver works only with Neon.
+ *
+ * In both cases `connect()` returns a client with:
+ *   sql`... ${value} ...`      -> array of rows
+ *   sql.query(text, params)    -> array of rows
+ * and Postgres errors keep their `code` (for example 23505 = unique index).
+ * The env var names (CARTELLA_DATI, PORTA_API) stay Italian: they are user
+ * configuration.
+ */
 import { readFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const FILE_ENV = join(ROOT, '.env.local')
+const ENV_FILE = join(ROOT, '.env.local')
 
-function caricaEnv() {
+/** Read .env.local into process.env. A variable already set wins. */
+function loadEnv() {
   let raw
 
   try {
-    raw = readFileSync(FILE_ENV, 'utf8')
+    raw = readFileSync(ENV_FILE, 'utf8')
   } catch {
     return
   }
@@ -33,89 +37,103 @@ function caricaEnv() {
       continue
     }
 
-    const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.+?)\s*$/)
+    const match = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.+?)\s*$/)
 
-    if (m && !process.env[m[1]]) {
-      process.env[m[1]] = m[2].replaceAll(/^["']|["']$/g, '')
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2].replaceAll(/^["']|["']$/g, '')
     }
   }
 }
 
-// Il segnaposto di .env.example non è una connection string vera: se è
-// rimasto quello, si usa il database locale invece di fallire.
-const SEGNAPOSTO = 'postgresql://utente:password@host/database'
+// The .env.example placeholder is not a real connection string: when it is
+// still there, use the local database instead of failing.
+const PLACEHOLDER = 'postgresql://utente:password@host/database'
 
-function urlNeon() {
+/**
+ * @returns {string|null} the Neon connection string, or null for local mode
+ */
+function neonUrl() {
   const url = process.env.DATABASE_URL || process.env.POSTGRES_URL
 
-  if (!url || url.startsWith(SEGNAPOSTO)) {
+  if (!url || url.startsWith(PLACEHOLDER)) {
     return null
   }
 
   return url
 }
 
-// Il template taggato diventa una query con $1, $2, ...: i valori viaggiano
-// sempre come parametri, mai incollati nel testo.
-function adattaPglite(db) {
-  const query = async (testo, parametri = []) => (await db.query(testo, parametri)).rows
+// The tagged template becomes a query with $1, $2, ...: the values always
+// travel as parameters, never pasted into the text.
+function adaptPglite(db) {
+  const query = async (text, params = []) => (await db.query(text, params)).rows
 
-  const sql = (stringhe, ...valori) =>
-    query(stringhe.reduce((acc, s, i) => `${acc}$${i}${s}`), valori)
+  const sql = (strings, ...values) =>
+    query(strings.reduce((sum, part, i) => `${sum}$${i}${part}`), values)
 
   sql.query = query
-  sql.chiudi = () => db.close()
+  sql.close = () => db.close()
 
   return sql
 }
 
-export async function connetti() {
-  caricaEnv()
-  const url = urlNeon()
+/**
+ * Open the database: Neon when a connection string exists, else local PGlite.
+ *
+ * @returns {Promise<Function>} the sql client, with mode and close()
+ */
+export async function connect() {
+  loadEnv()
+  const url = neonUrl()
 
   if (url) {
     const { neon } = await import('@neondatabase/serverless')
     const sql = neon(url)
-    sql.chiudi = async () => {}
-    sql.modalita = 'neon'
+    sql.close = async () => {}
+    sql.mode = 'neon'
 
     return sql
   }
 
-  const cartella = resolve(ROOT, process.env.CARTELLA_DATI || 'dati')
-  mkdirSync(cartella, { recursive: true })
+  const dataDir = resolve(ROOT, process.env.CARTELLA_DATI || 'dati')
+  mkdirSync(dataDir, { recursive: true })
   const { PGlite } = await import('@electric-sql/pglite')
-  const db = await PGlite.create(cartella)
-  const sql = adattaPglite(db)
-  sql.modalita = 'locale'
-  sql.cartella = cartella
+  const db = await PGlite.create(dataDir)
+  const sql = adaptPglite(db)
+  sql.mode = 'local'
+  sql.dataDir = dataDir
 
   return sql
 }
 
-// Applica db/schema.sql. Idempotente: tutto è CREATE ... IF NOT EXISTS.
-export async function applicaSchema(sql, { file = 'schema.sql', log = () => {} } = {}) {
+/**
+ * Apply db/schema.sql. Idempotent: each statement is CREATE ... IF NOT EXISTS.
+ *
+ * @param {Function} sql - client from connect()
+ * @param {{ file?: string, log?: Function }} [options]
+ * @returns {Promise<number>} number of statements applied
+ */
+export async function applySchema(sql, { file = 'schema.sql', log = () => {} } = {}) {
   const ddl = readFileSync(join(ROOT, 'db', file), 'utf8')
 
-  // Il driver HTTP di Neon esegue una istruzione per volta: si divide sui ';'
-  // di fine riga, tenendo fuori i commenti (che possono contenere ';').
-  const istruzioni = ddl
+  // The Neon HTTP driver runs one statement at a time: split on the ';' at
+  // line end, and leave out the comments (they can hold ';').
+  const statements = ddl
     .split('\n')
-    .filter((r) => !r.trim().startsWith('--'))
+    .filter((line) => !line.trim().startsWith('--'))
     .join('\n')
     .split(/;\s*$/m)
-    .map((s) => s.trim())
+    .map((statement) => statement.trim())
     .filter(Boolean)
 
-  for (const st of istruzioni) {
+  for (const statement of statements) {
     try {
-      await sql.query(st)
-      log(`  [ok]   ${st.replaceAll(/\s+/g, ' ').slice(0, 72)}`)
-    } catch (e) {
-      e.message = `${st.replaceAll(/\s+/g, ' ').slice(0, 72)}\n         ${e.message}`
-      throw e
+      await sql.query(statement)
+      log(`  [ok]   ${statement.replaceAll(/\s+/g, ' ').slice(0, 72)}`)
+    } catch (error) {
+      error.message = `${statement.replaceAll(/\s+/g, ' ').slice(0, 72)}\n         ${error.message}`
+      throw error
     }
   }
 
-  return istruzioni.length
+  return statements.length
 }

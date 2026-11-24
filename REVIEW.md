@@ -58,7 +58,7 @@ controlli). Quella prova ha trovato il bug #18.
   fattura c'è PayPal o contanti.
 - **Nessuna autenticazione sulle API**: oggi va bene perché il server ascolta
   solo su 127.0.0.1. Prima di metterlo online serve un login.
-- **Test solo sulle funzioni pure**: `calcoloFattura`, `generaXml` e le
+- **Test solo sulle funzioni pure**: `invoiceMath`, `invoiceXml` e le
   validazioni di CF/P.IVA e gli schemi dei form hanno 106 test Vitest
   (`npm test`), compresi i bug #2, #3, #5, #16, #19, #20, #21 e #22. Server e query non hanno ancora test: servono un database
   di prova.

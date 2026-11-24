@@ -73,7 +73,7 @@ su `127.0.0.1`, non è raggiungibile da fuori, e un'eventuale connection string
 resta nel processo Node, mai nel bundle JavaScript.
 
 PDF e XML si generano nel browser (`pdfmake` e un generatore XML scritto a mano
-in `src/lib/generaXml.js`).
+in `src/lib/invoiceXml.js`).
 
 ## Avvio rapido
 
@@ -138,7 +138,7 @@ pensati per il regime ordinario.
 | Dati del cliente | Fotografati all'emissione: se poi cambi l'anagrafica, la fattura emessa non cambia. |
 
 Tutti i valori (percentuale, soglia, importo del bollo, dicitura) sono in
-Impostazioni; i predefiniti sono in `src/data/impostazioniDefault.js`.
+Impostazioni; i predefiniti sono in `src/data/defaultSettings.js`.
 
 ## Inviare la fattura all'Agenzia delle Entrate
 
@@ -179,26 +179,26 @@ Un numero già usato restituisce `409` con la spiegazione, non un errore generic
 ```
 db/schema.sql           schema completo del database (idempotente)
 scripts/_db.mjs         connessione: PGlite locale, oppure Neon se c'è DATABASE_URL
-scripts/applica_schema.mjs
+scripts/apply-schema.mjs
 server/index.mjs        API Express, in ascolto solo su 127.0.0.1
-server/mappa.mjs        traduzione fra righe del DB e oggetti dell'app
+server/mapping.mjs      traduzione fra righe del DB e oggetti dell'app
 src/
   views/                pagine; quelle già migrate hanno una cartella
                         (es. Clients/: index.js, _Nome.vue, _Nome.css se serve)
   components/           componenti riusabili
-  stores/               stato Pinia (clienti, fatture, prodotti, impostazioni)
+  stores/               stato Pinia (clients, invoices, products, settings)
   locales/it.json       tutti i testi dell'interfaccia (vue-i18n)
   lib/
-    calcoloFattura.js   imponibile, rivalsa, bollo, totale
-    generaXml.js        XML FatturaPA 1.2 (FPR12)
-    generaPdf.js        PDF di cortesia
+    invoiceMath.js      imponibile, rivalsa, bollo, totale
+    invoiceXml.js       XML FatturaPA 1.2 (FPR12)
+    invoicePdf.js       PDF di cortesia
     clientSchema.js     validazione della scheda cliente (zod)
     productSchema.js    validazione della scheda prodotto (zod)
     displayNames.js     nome del cliente e numero fattura per le viste
     invoiceDraft.js     wizard della nuova fattura: regole e documento
     externalInvoice.js  fattura emessa altrove: regole e documento
     invoiceStatus.js    stati della fattura e passaggi consentiti
-  data/impostazioniDefault.js
+  data/defaultSettings.js
 tests/                  test Vitest delle funzioni pure (calcolo, XML, validazioni)
 docs/adr/               decisioni di architettura (ADR)
 eslint.config.mjs       regole di stile del codice

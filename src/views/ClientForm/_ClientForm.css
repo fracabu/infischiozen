@@ -6,17 +6,6 @@
  */
 
 /* ─── Purchases card ─── */
-article[data-part="client-form"] section[data-part="card"] {
-  display: flex;
-  flex-direction: column;
-}
-
-article[data-part="client-form"] section[data-part="card"] h2 {
-  margin-bottom: 14px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
 article[data-part="client-form"] [data-part="summary"],
 article[data-part="client-form"] [data-part="empty"] {
   font-size: 13px;

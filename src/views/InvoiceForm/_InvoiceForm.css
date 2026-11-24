@@ -34,27 +34,7 @@ article[data-part="invoice-form"] ol[data-part="steps"] li[aria-current="step"] 
   border-color: var(--color-accent);
 }
 
-/* ─── Card titles ─── */
-article[data-part="invoice-form"] section[data-part="card"] {
-  flex-direction: column;
-}
-
-article[data-part="invoice-form"] section[data-part="card"] > h2 {
-  margin-bottom: 14px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
 /* ─── Step 1: client ─── */
-article[data-part="invoice-form"] [data-part="notice"] {
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #92400e;
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-radius: 8px;
-}
-
 article[data-part="invoice-form"] a {
   font-weight: 600;
   color: var(--color-accent-strong);
@@ -76,15 +56,7 @@ article[data-part="invoice-form"] [data-part="client-card"] small {
   color: var(--color-muted);
 }
 
-/* ─── Step 2 and 3: tables ─── */
-article[data-part="invoice-form"] table[data-part="lines"] {
-  margin-bottom: 12px;
-}
-
-article[data-part="invoice-form"] table[data-part="lines"] th {
-  padding: 0 4px 6px;
-}
-
+/* ─── Step 3: summary table ─── */
 article[data-part="invoice-form"] [data-align="end"] {
   text-align: right;
   white-space: nowrap;

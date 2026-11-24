@@ -17,7 +17,7 @@ import { invoiceDraftSchema, emptyLine, buildInvoice } from '../../lib/invoiceDr
 import { calcolaFattura, totaleRiga } from '../../lib/calcoloFattura'
 import { formatEuro, oggiISO } from '../../lib/format'
 import { clientName } from '../../lib/displayNames'
-import { InvoiceLine } from '../../components/InvoiceLine'
+import { InvoiceLines } from '../../components/InvoiceLines'
 import { InvoiceTotals } from '../../components/InvoiceTotals'
 import './_InvoiceForm.css'
 
@@ -74,31 +74,6 @@ const stepError = computed(() => {
 
   return errors.value[field] ? t(errors.value[field]) : serverError.value
 })
-
-/**
- * Apply changed fields to one line.
- *
- * @param {number} index
- * @param {object} patch - changed fields only
- */
-function updateLine(index, patch) {
-  lines.value = lines.value.with(index, { ...lines.value[index], ...patch })
-}
-
-/**
- * Remove one line. The table always keeps one line.
- *
- * @param {number} index
- */
-function removeLine(index) {
-  const rest = lines.value.filter((_, position) => position !== index)
-
-  lines.value = rest.length > 0 ? rest : [emptyLine()]
-}
-
-function addLine() {
-  lines.value = [...lines.value, emptyLine()]
-}
 
 async function next() {
   serverError.value = ''
@@ -214,46 +189,7 @@ const issue = submitAs('issue')
         <h2 id="invoice-lines-title">
           {{ t('invoiceForm.linesTitle') }}
         </h2>
-        <table data-part="lines">
-          <thead>
-            <tr>
-              <th scope="col">
-                {{ t('invoiceLine.product') }}
-              </th>
-              <th scope="col">
-                {{ t('invoiceLine.description') }}
-              </th>
-              <th scope="col">
-                {{ t('invoiceLine.quantity') }}
-              </th>
-              <th scope="col">
-                {{ t('invoiceLine.unitPrice') }}
-              </th>
-              <th scope="col" data-align="end">
-                {{ t('invoiceLine.total') }}
-              </th>
-              <th scope="col">
-                <span data-visually-hidden>{{ t('common.actions') }}</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <InvoiceLine
-              v-for="(line, index) in lines"
-              :key="index"
-              :line="line"
-              :number="index + 1"
-              :products="productStore.attivi"
-              @update="(changed) => updateLine(index, changed)"
-              @remove="removeLine(index)"
-            />
-          </tbody>
-        </table>
-        <p>
-          <button type="button" data-size="small" @click="addLine">
-            {{ t('invoiceForm.addLine') }}
-          </button>
-        </p>
+        <InvoiceLines v-model="lines" :products="productStore.attivi" />
         <InvoiceTotals :amounts="amounts" />
       </section>
 

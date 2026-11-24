@@ -1,0 +1,28 @@
+/**
+ * FILE: _ExternalInvoiceForm.css
+ * USAGE: Styles for the ExternalInvoiceForm view. Fields, cards, notices,
+ *        alert and actions come from src/styles/base.css.
+ * SCOPE: article[data-part="external-invoice-form"]
+ */
+
+/* ─── Links ─── */
+article[data-part="external-invoice-form"] a {
+  font-weight: 600;
+  color: var(--color-accent-strong);
+}
+
+article[data-part="external-invoice-form"] a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Lines error, outside a field ─── */
+article[data-part="external-invoice-form"] section > [data-part="error"] {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-error);
+}
+
+/* ─── Rivalsa choice under the lines ─── */
+article[data-part="external-invoice-form"] section > fieldset[data-part="field"] {
+  margin-top: 16px;
+}

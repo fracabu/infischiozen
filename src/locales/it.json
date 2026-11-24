@@ -247,5 +247,28 @@
       "lines": "Aggiungi almeno una riga con descrizione.",
       "date": "Inserisci la data della fattura."
     }
+  },
+  "externalForm": {
+    "title": "Registra fattura esterna",
+    "info": "Registra una fattura emessa altrove (es. con un altro software o un intermediario) per contabilizzarla nel fatturato. Non viene generato XML né PDF: il documento ufficiale resta quello dell'intermediario. Il numero che inserisci viene conservato così com'è: la numerazione è una sola per partita IVA, quindi le fatture create dall'app continueranno dal numero successivo.",
+    "invalid": "Correggi i campi evidenziati prima di salvare.",
+    "documentTitle": "Dati documento",
+    "number": "Numero fattura",
+    "numberHint": "L'anno viene dalla data: la fattura sarà la {number}/{year}.",
+    "date": "Data",
+    "status": "Stato",
+    "clientTitle": "Cliente",
+    "linesTitle": "Righe",
+    "pdfTitle": "PDF della fattura (allegato)",
+    "pdf": "PDF originale",
+    "pdfHint": "Il PDF generato dal software con cui l'hai emessa.",
+    "removePdf": "Rimuovi PDF",
+    "notesTitle": "Note",
+    "notesPlaceholder": "Note (facoltative)",
+    "save": "Registra fattura",
+    "error": {
+      "number": "Inserisci il numero della fattura (intero, da 1 in su).",
+      "status": "Scegli lo stato della fattura."
+    }
   }
 }

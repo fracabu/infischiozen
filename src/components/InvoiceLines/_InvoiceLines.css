@@ -1,0 +1,20 @@
+/**
+ * FILE: _InvoiceLines.css
+ * USAGE: Styles for the InvoiceLines component (editable line table)
+ * SCOPE: table[data-part="invoice-lines"]
+ */
+
+/* ─── Header ─── */
+table[data-part="invoice-lines"] thead th {
+  padding: 0 4px 6px;
+}
+
+table[data-part="invoice-lines"] [data-align="end"] {
+  text-align: right;
+}
+
+/* ─── Add button row ─── */
+table[data-part="invoice-lines"] tfoot td {
+  padding: 12px 0 0;
+  border-bottom: none;
+}

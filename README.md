@@ -184,7 +184,7 @@ server/index.mjs        API Express, in ascolto solo su 127.0.0.1
 server/mappa.mjs        traduzione fra righe del DB e oggetti dell'app
 src/
   views/                pagine; quelle già migrate hanno una cartella
-                        (Clients/, ClientForm/: index.js, _Nome.vue, _Nome.css)
+                        (es. Clients/, ProductForm/: index.js, _Nome.vue, _Nome.css)
   components/           componenti riusabili
   stores/               stato Pinia (clienti, fatture, prodotti, impostazioni)
   locales/it.json       tutti i testi dell'interfaccia (vue-i18n)
@@ -192,7 +192,8 @@ src/
     calcoloFattura.js   imponibile, rivalsa, bollo, totale
     generaXml.js        XML FatturaPA 1.2 (FPR12)
     generaPdf.js        PDF di cortesia
-    clientSchema.js     regole di validazione della scheda cliente (zod)
+    clientSchema.js     validazione della scheda cliente (zod)
+    productSchema.js    validazione della scheda prodotto (zod)
   data/impostazioniDefault.js
 tests/                  test Vitest delle funzioni pure (calcolo, XML, validazioni)
 docs/adr/               decisioni di architettura (ADR)

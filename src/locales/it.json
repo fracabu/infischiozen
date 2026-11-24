@@ -102,5 +102,54 @@
       "draft": "Bozza",
       "line": "{quantity} × {price}"
     }
+  },
+  "unit": {
+    "servizio": "servizio",
+    "ora": "ora",
+    "pz": "pz",
+    "giornata": "giornata"
+  },
+  "products": {
+    "title": "Prodotti & Servizi",
+    "new": "+ Nuovo prodotto",
+    "searchLabel": "Cerca prodotti",
+    "searchPlaceholder": "Cerca per nome, categoria...",
+    "listLabel": "Catalogo prodotti",
+    "column": {
+      "name": "Nome",
+      "category": "Categoria",
+      "unit": "Unità",
+      "price": "Prezzo",
+      "status": "Stato"
+    },
+    "active": "Attivo",
+    "inactive": "Disattivato",
+    "activate": "Attiva",
+    "deactivate": "Disattiva",
+    "noMatch": "Nessun prodotto corrisponde alla ricerca.",
+    "noneYet": "Il catalogo è vuoto: crea i tuoi prodotti o servizi con «Nuovo prodotto».",
+    "deleteTitle": "Elimina prodotto",
+    "deleteMessage": "Eliminare «{name}» dal catalogo?"
+  },
+  "productForm": {
+    "titleNew": "Nuovo prodotto",
+    "titleEdit": "Modifica prodotto",
+    "save": "Salva prodotto",
+    "saving": "Salvataggio...",
+    "invalid": "Correggi i campi evidenziati prima di salvare.",
+    "required": "obbligatorio",
+    "field": {
+      "name": "Nome prodotto/servizio",
+      "description": "Descrizione",
+      "category": "Categoria",
+      "unit": "Unità di misura",
+      "price": "Prezzo imponibile unitario (€)",
+      "status": "Stato"
+    },
+    "activeLabel": "Prodotto attivo (selezionabile nelle fatture)",
+    "error": {
+      "required": "Obbligatorio",
+      "price": "Prezzo non valido"
+    }
   }
 }

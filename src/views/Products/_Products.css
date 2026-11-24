@@ -1,0 +1,79 @@
+/**
+ * FILE: _Products.css
+ * USAGE: Styles for the Products view (catalog list)
+ * SCOPE: article[data-part="products"]
+ */
+
+/* ─── Search ─── */
+article[data-part="products"] search[data-part="search"] {
+  display: flex;
+  margin-bottom: 18px;
+}
+
+article[data-part="products"] search input {
+  flex: 1;
+  min-width: 200px;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* ─── List card ─── */
+article[data-part="products"] section[data-part="list"] {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+article[data-part="products"] tbody th {
+  padding: 12px;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+article[data-part="products"] tbody tr:last-child th {
+  border-bottom: none;
+}
+
+article[data-part="products"] [data-part="description"] {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+article[data-part="products"] [data-align="end"] {
+  text-align: right;
+  white-space: nowrap;
+}
+
+article[data-part="products"] td[data-part="actions"] {
+  text-align: right;
+  white-space: nowrap;
+}
+
+article[data-part="products"] button[data-tone="danger"] {
+  color: var(--color-error);
+}
+
+/* ─── Status badges ─── */
+article[data-part="products"] [data-part="badge"][data-kind="active"] {
+  color: #166534;
+  background: #dcfce7;
+}
+
+article[data-part="products"] [data-part="badge"][data-kind="inactive"] {
+  color: #525252;
+  background: #e5e5e5;
+}
+
+/* ─── Empty state ─── */
+article[data-part="products"] [data-part="empty"] {
+  padding: 60px 20px;
+  color: var(--color-muted);
+  text-align: center;
+}
